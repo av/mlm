@@ -1,0 +1,12 @@
+{
+  "name": "mlm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:av/mlm.git",
+  "license": "MIT",
+  "scripts": {
+    "dev:dc": "docker-compose -f ./docker-compose.dev.yml",
+    "dev:up": "yarn dev:dc up",
+    "dev:run": "yarn dev:dc run"
+  }
+}
