@@ -3,7 +3,7 @@ services:
   ml_service:
     build: .
     volumes:
-      - ~/.cache/huggingface/hub/:/cache
+      - ~/.cache/huggingface/:/cache
       - ./data:/data
       - ./src/:/src
     ports:
