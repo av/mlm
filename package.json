@@ -7,6 +7,7 @@
   "scripts": {
     "dev:dc": "docker-compose -f ./docker-compose.dev.yml",
     "dev:up": "yarn dev:dc up",
+    "dev:down": "yarn dev:dc down",
     "dev:run": "yarn dev:dc run"
   }
 }

@@ -3,14 +3,14 @@ services:
   ml_service:
     build: .
     volumes:
-      - ./.cache:/cache
+      - ~/.cache/transformers:/cache
       - ./data:/data
       - ./src/:/src
     ports:
       - 8888:8888
 
     environment:
-      - HF_DATASETS_CACHE=/cache
+      - HF_HOME=/cache
 
     command: [
       "jupyter", "lab",
