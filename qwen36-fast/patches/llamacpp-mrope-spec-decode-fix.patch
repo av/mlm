@@ -1,0 +1,75 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: qwen36-fast timebox <noreply@localhost>
+Date: Thu, 23 Apr 2026 01:55:00 +0200
+Subject: [PATCH] llama-batch: clarify M-RoPE pos check failure root cause for
+ hybrid-recurrent models (Qwen3.6, Qwen3-Next, GLM4-MoE)
+
+Speculative decoding (lookup, ngram, draft-model) submits multi-token
+verify batches. When the target model has a hybrid memory (attention +
+recurrent, e.g. Qwen3.6 / Qwen3-Next with Gated DeltaNet layers 3:1),
+partial acceptance causes permanent recurrent-state corruption because
+the SSM/GDN state cannot be rolled back (`llama_memory_recurrent::seq_rm`
+refuses partial intersections at line 166 — the state of previous
+positions is not preserved by design).
+
+The user-observed failure surfaces downstream as the M-RoPE position
+check (this file, ~line 266): `memory->seq_pos_max(s) >= batch_min_pos`.
+This is confusing — the error message blames M-RoPE positional encoding
+but the real cause is that hybrid-recurrent memory refused to truncate
+after a partial spec-decode reject, so the memory's stored `seq_pos_max`
+is still at the last ubatch's end.
+
+This patch:
+  * detects the recurrent-partial-rollback case and emits a dedicated
+    error message pointing at the actual root cause;
+  * leaves the existing M-RoPE check intact for true M-RoPE misuse.
+
+Non-fix: this does NOT enable spec-decode for hybrid-recurrent models.
+That requires implementing state checkpoint/restore in
+`llama_memory_recurrent` (pre-ubatch snapshot of SSM + conv tensors,
+restore on partial-reject). Estimated 300-500 LoC; multi-day work.
+
+Affected models (hybrid recurrent+attn — spec decode will ALL fail the
+same way): qwen35, qwen35moe, qwen3next, glm4moe (when use_mrope), lfm2,
+mamba-base, plamo2, kimi-linear. See each model file's
+`GGML_ASSERT(ubatch.equal_seqs())`.
+
+---
+ src/llama-batch.cpp | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/src/llama-batch.cpp b/src/llama-batch.cpp
+index 0000001..0000002 100644
+--- a/src/llama-batch.cpp
++++ b/src/llama-batch.cpp
+@@ -262,6 +262,27 @@ bool llama_batch_allocr::init(
+             const llama_pos p0 = memory ? memory->seq_pos_max(s) : -1;
+
+             if (batch.token) {
+                 if (p0 >= 0 && p0 >= seq_pos_min(s)) {
++                    // Hybrid-recurrent diagnostic: if this is a multi-token
++                    // batch starting at a position <= memory's stored max, the
++                    // most likely cause is that a prior seq_rm() call silently
++                    // returned false because a hybrid-recurrent memory refuses
++                    // partial rollback. Speculative decoding (lookup / ngram /
++                    // draft-model) triggers this after partial verify-batch
++                    // acceptance. There is no fix here — the recurrent (SSM /
++                    // Gated DeltaNet / Mamba) state cannot be rolled back
++                    // without checkpointing it before the ubatch.
++                    if (seq_pos_max(s) > seq_pos_min(s)) {
++                        LLAMA_LOG_ERROR(
++                                "%s: multi-token batch at seq %d starts at Y=%d but memory seq_pos_max=X=%d\n"
++                                " this usually means a prior seq_rm(p0=Y, p1=-1) was refused because the\n"
++                                " memory has a recurrent component (SSM / Gated DeltaNet / Mamba) and\n"
++                                " partial-rollback is unsupported. Speculative decoding is not usable on\n"
++                                " hybrid-recurrent models (e.g. Qwen3.6, Qwen3-Next, GLM4-MoE w/ mrope)\n"
++                                " without state-checkpointing in llama_memory_recurrent. Falling back to\n"
++                                " greedy single-token decode is the only workaround today.\n",
++                                __func__, s, seq_pos_min(s), p0);
++                    }
++
+                     LLAMA_LOG_ERROR(
+                             "%s: the tokens of sequence %d in the input batch have inconsistent sequence positions:\n"
+                             " - the last position stored in the memory module of the context (i.e. the KV cache) for sequence %d is X = %d\n"
+--
+2.46.0
