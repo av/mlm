@@ -1,0 +1,77 @@
+=== CONFIG B ===
+server_args: -c 8192 -np 1 --spec-type ngram-cache --draft-max 16 --draft-min 2 --ctx-checkpoints 8
+load_time_s: 2
+request_wall_ms: 52515
+--- metrics ---
+predicted_per_second (decode tps): 10.959915180531423
+prompt_per_second (prefill tps):   307.2026568878434
+completion_tokens: 512
+draft_n (drafts fired x draft_len): 131
+draft_n_accepted: 131
+--- sample output (first 200 chars) ---
+Here's a thinking process:
+
+1.  **Understand User Request:**
+   - **Role:** Senior software engineer reviewing a Python module.
+   - **Task:** Repeat the module contents verbatim at the end, then writ
+--- server log tail (last 60 lines) ---
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=9, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=9, n_seqs=1, size=1, used=1, head=0
+[MTP-VERIFY] pos=0: sampled=17, draft=24693, REJECTED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=0, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=1, head=0
+[MTP-VERIFY] pos=0: sampled=17, draft=17, ACCEPTED
+[MTP-VERIFY] bonus pos=1: sampled=8
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=3, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=3, n_seqs=1, size=1, used=1, head=0
+[MTP-VERIFY] pos=0: sampled=2180, draft=1466, REJECTED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=0, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=1, head=0
+[MTP-VERIFY] pos=0: sampled=2180, draft=2180, ACCEPTED
+[MTP-VERIFY] bonus pos=1: sampled=283
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+slot update_batch: id  0 | task 0 | draft size 8 exceeds max 4, truncating
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-VERIFY] pos=0: sampled=18, draft=19, REJECTED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=0, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=1, head=0
+[MTP-VERIFY] pos=0: sampled=18, draft=18, ACCEPTED
+[MTP-VERIFY] bonus pos=1: sampled=27653
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+slot print_timing: id  0 | task 0 | 
+prompt eval time =    5781.20 ms /  1776 tokens (    3.26 ms per token,   307.20 tokens per second)
+       eval time =   46715.69 ms /   512 tokens (   91.24 ms per token,    10.96 tokens per second)
+      total time =   52496.89 ms /  2288 tokens
+draft acceptance rate = 1.00000 (  131 accepted /   131 generated)
+statistics ngram_cache: #calls(b,g,a) = 1 378 61, #gen drafts = 67, #acc drafts = 61, #gen tokens = 455, #acc tokens = 131, dur(b,g,a) = 0.001, 8.512, 0.040 ms
+slot      release: id  0 | task 0 | stop processing: n_tokens = 2287, truncated = 0
+srv  update_slots: all slots are idle
+srv  log_server_r: done request: POST /v1/chat/completions 172.17.0.1 200
