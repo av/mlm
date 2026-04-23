@@ -62,3 +62,10 @@ Fully self-contained (tested under `env -i bash`). `--help` / `--short` supporte
 - Working tree clean. Nothing sensitive committed. Remote push **not** done — your call.
 - See `CHANGELOG.md` for the full iteration-by-iteration history with commit hashes.
 - iter-26 added workload-diversity bench (`bench/15-workload-diversity.md` + 8 logs + 3 new prompts in `prompts/`).
+
+## Helpers
+
+Two copy-paste helper scripts in `bin/` (iter-28, the frictionless-morning pack):
+
+- **`bin/push-to-origin.sh`** — shows `git log --oneline -30`, refuses if the tree is dirty or you're off `main`, asks Y/n, then pushes. Use `--dry-run` to preview without contacting the remote.
+- **`bin/file-upstream-pr.sh`** — prints the filing instructions from `patches/upstream-pr-draft/README.md` plus the exact `gh pr create ... --body-file PR-DESCRIPTION.md` command to paste into your llama.cpp fork checkout. Does NOT run `gh` — by design a copy-paste helper, not an auto-filer.
