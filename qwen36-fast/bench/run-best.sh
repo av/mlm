@@ -4,10 +4,11 @@
 # Usage:
 #   ./bench/run-best.sh            # full run, n_predict=256, ~40-60s
 #   ./bench/run-best.sh --short    # sanity-check, n_predict=64, ~15-25s
+#   ./bench/run-best.sh --help     # this message
 #
 # Exit codes:
-#   0 = measured tps >= 25 (the "still reproducing" floor)
-#   1 = measured tps < 25 (regression)
+#   0 = measured tps >= floor (the "still reproducing" floor)
+#   1 = measured tps < floor (regression)
 #   2 = GGUF missing
 #   3 = patched binary missing
 #   4 = docker / device prerequisites missing
@@ -15,7 +16,20 @@
 # Reference numbers (from iter-13, bench/06-patched-lookup.md):
 #   tps = 30.05, alpha = 0.653, n_predict = 256, prompt = 1766 tokens.
 
+# Make script self-contained: don't assume caller's env exists.
+# PATH must include docker; default to Fedora/Debian-ish PATH superset.
+export PATH="${PATH:-/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin}"
+# HOME is needed to locate HF model cache. Fall back to invoking user's home.
+if [[ -z "${HOME:-}" ]]; then
+    export HOME="$(getent passwd "$(id -un)" | cut -d: -f6)"
+fi
+
 set -euo pipefail
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+    sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'
+    exit 0
+fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
