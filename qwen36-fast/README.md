@@ -1,6 +1,6 @@
 # Qwen3.6-27B fast-decode on Strix Halo (gfx1151)
 
-Night run: 2026-04-23 00:20 - 06:00 CEST (~5h40m, 24 iterations, 22
+Night run: 2026-04-23 00:20 - 06:00 CEST (~5h40m, 27 iterations, 25
 commits). Orchestrator log: `/tmp/timeboxed-qwen36-fast-1776896422.md`.
 Iteration notes in `notes/`, benchmark numbers + raw logs in `bench/`,
 local patches in `patches/`. Chronological history: `CHANGELOG.md`.
@@ -271,7 +271,7 @@ All require real engineering, none are 1-day fixes.
 ## Files
 
 - `README.md` — this file.
-- `CHANGELOG.md` — chronological 24-iteration night log with commit hashes.
+- `CHANGELOG.md` — chronological 27-iteration night log with commit hashes.
 - `MORNING.md` — 30-second briefing, reproduce instructions, the ONE decision.
 - `notes/00-context.md` — orchestrator snapshot + phased plan + final
   outcome footer.

@@ -1,6 +1,6 @@
 # Morning briefing: Qwen3.6-27B fast-decode overnight run
 
-**Date**: 2026-04-23, started 00:20 CEST, ended 06:00 CEST (~5h40m, 26 iterations, 26 commits)
+**Date**: 2026-04-23, started 00:20 CEST, ended 06:00 CEST (~5h40m, 27 iterations, 25 commits)
 
 ## 30-second answer
 
@@ -58,7 +58,7 @@ Fully self-contained (tested under `env -i bash`). `--help` / `--short` supporte
 
 ## Repo state
 
-- 26 commits on `main` ahead of `origin/main` after the final CHANGELOG commit.
+- 25 commits on `main` ahead of `origin/main` after the final CHANGELOG polish commit.
 - Working tree clean. Nothing sensitive committed. Remote push **not** done — your call.
 - See `CHANGELOG.md` for the full iteration-by-iteration history with commit hashes.
 - iter-26 added workload-diversity bench (`bench/15-workload-diversity.md` + 8 logs + 3 new prompts in `prompts/`).

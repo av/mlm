@@ -2,7 +2,8 @@
 
 Chronological record of the 2026-04-22/23 overnight timeboxed run.
 Start 00:20 CEST, end 06:00 CEST (~5h40m).
-24 iterations producing 22 code+doc commits + 1 final CHANGELOG commit.
+27 iterations producing 25 code+doc commits (2 iterations — 11 and 12 —
+folded into later commits; final commit count = 25 after this polish).
 Orchestrator log: `/tmp/timeboxed-qwen36-fast-1776896422.md`.
 
 ## Phases
@@ -18,7 +19,8 @@ Orchestrator log: `/tmp/timeboxed-qwen36-fast-1776896422.md`.
 | VII. MTP path | 14-15 | 03:10-03:50 | Port PR #20700, merge MTP GGUF, measure: regresses to 7.80 tps |
 | VIII. Tune & rule out | 16, 18 | 03:50-04:55 | Lookup saturates at ~31 tps; MTP ruled structurally single-token |
 | IX. Document & validate | 17, 19-23 | 04:30-05:30 | README, MORNING, reproducibility, server validation, upstream-PR draft |
-| X. Post-mortem polish | 24 | 05:30-06:00 | Server tuning explored (~12 tps cap); final CHANGELOG + doc QA |
+| X. Post-mortem polish | 24-25 | 05:30-05:45 | Server tuning explored (~12 tps cap); CHANGELOG written (meta) |
+| XI. Honest numbers | 26-27 | 05:45-06:00 | Workload-diversity bench, 21-32 tps range adopted, final doc polish |
 
 ## Iterations
 
@@ -196,23 +198,63 @@ Orchestrator log: `/tmp/timeboxed-qwen36-fast-1776896422.md`.
   `tools/server/server-context.cpp`.
 - Commit: **819050c** `qwen36-fast: sweep server-side ngram spec config`
 
-### Iter 25 (this commit) — 05:50-06:00 CEST — final CHANGELOG + doc QA pass
-- Verified all cross-references in README / MORNING / notes/08-final-state
-  against filesystem: all present.
-- Fixed stale metadata in README header (date/iteration count), MORNING
-  repo-state counts, and added CHANGELOG + MORNING + new bench/notes
-  files to README's Files section.
-- Wrote this CHANGELOG.md as the canonical chronological record.
-- Commit: (this one) `qwen36-fast: final CHANGELOG + doc QA pass`
+### Iter 25 — 05:39 CEST — final docs QA pass + CHANGELOG (meta)
+- Cross-reference verification (32 referenced files, 0 broken), CHANGELOG.md
+  written (257 lines, full 24-iteration story at the time of writing),
+  README header metadata refreshed (date + iteration count), MORNING.md
+  commit counts updated. All cross-references verified.
+- Commit: **5fe76aa** `qwen36-fast: final CHANGELOG + doc QA pass`
+
+### Iter 26 — 05:51 CEST — workload-diversity bench, honest 21-32 tps range
+- Ran llama-lookup with canonical config across 4 realistic workloads, 2
+  reps each. Added 3 new prompts to `prompts/` (codegen, chat, nl).
+- **Honest tps range across workloads (8 runs, default sampling)**:
+  - code-review (self-referential): **27.3 tps** α=0.62
+  - chat w/ history: **29.3 tps** α=0.72
+  - code-generation-from-spec: **25.1 tps** α=0.40
+  - NL translation/summary: **25.6 tps** α=0.40
+- Overall range: **21.3 - 32.0 tps**, mean 26.8 ± 3.5. Speedup vs 13.82
+  baseline: 1.54x - 2.32x. The iter-20 30.21 tps number is the high end
+  of the range (reproducible on the self-referential code-review prompt),
+  not the typical user experience.
+- Updated MORNING.md + README.md TL;DR to report the honest range instead
+  of the single 30-tps peak number. CHANGELOG still references both the
+  30.21 peak (iter-20 reproducibility) AND the 21-32 typical range.
+- Key findings: rep-to-rep variance 4-7 tps under default sampling;
+  greedy (`--temp 0`) degenerates all 4 workloads into token loops at
+  dm=4; `--ignore-eos` needed for fair comparison; lookup α is
+  workload-shape-dependent.
+- Files: `bench/15-workload-diversity.md` + 8 raw logs,
+  `prompts/prompt_{codegen,chat,nl}.txt`.
+- Commit: **8e920e0** `qwen36-fast: workload-diversity bench + honest tps range`
+
+### Iter 27 (this commit) — 05:58 CEST — final CHANGELOG polish (iter 25+26)
+- Added iter-25 and iter-26 entries to this CHANGELOG (iter-25 wrote the
+  file covering iters 1-24, so iter-26 and this polish were not yet here).
+- Cross-checked the three top-level docs (README / MORNING / this file) for
+  consistency on the tps range. All three now agree: **peak 30.21 tps,
+  typical 21-32 tps range, mean ~27 tps**.
+- Updated phase table (split post-mortem polish into phase X + phase XI)
+  and final-state repo counts.
+- Commit: (this one) `qwen36-fast: final CHANGELOG polish with iter 25+26 entries`
 
 ## Final state as of Thu 2026-04-23 06:00 CEST
 
-- **Best verified decode**: **30.21 tps** (`bench/run-best.sh` full mode,
-  iter-20), α = 66.94%, UD-Q2_K_XL + patched llama-lookup + `--draft-max 4`.
+- **Honest tps range across 4 realistic workloads (iter-26)**: **21 - 32
+  tps, mean 26.8 ± 3.5** over 8 runs. Per-workload: code-review ~27, chat
+  ~29, new code-gen ~25, NL translation ~26. Speedup 1.54x - 2.32x over
+  the UD-Q2_K_XL baseline (13.82 tps).
+- **Peak (reproducible, high end of the range)**: **30.21 tps**
+  (`bench/run-best.sh` full mode, iter-20), α = 66.94%, UD-Q2_K_XL +
+  patched llama-lookup + `--draft-max 4`, on the self-referential
+  code-review prompt. That single number stood in the README for three
+  iterations before iter-26 supplied the honest range context.
 - **Baseline**: 13.82 tps (UD-Q2_K_XL) / 10.87 tps (Q4_K_M). Net speedup
-  **2.17x / 2.76x**.
-- **Target 40 tps NOT reached** — gap −10 tps (−25%). Gap is structural
-  on this hardware; no available patch closes it.
+  at peak: **2.17x / 2.76x**. Net speedup across workload range: **1.54x
+  - 2.32x** (over Q2_K_XL baseline).
+- **Target 40 tps NOT reached** — gap -8 to -19 tps depending on
+  workload. Gap is structural on this hardware; no available patch
+  closes it.
 - **MTP via PR #20700**: works end-to-end but regresses to 7.80 tps on
   Strix Halo's 256 GB/s bandwidth. Structurally K=1 (iter-18 ruling).
 - **Upstream contribution ready**: `patches/upstream-pr-draft/` contains
@@ -222,16 +264,24 @@ Orchestrator log: `/tmp/timeboxed-qwen36-fast-1776896422.md`.
 
 ### Repo physical state
 
-- Branch: `main`, 23 commits ahead of `origin/main`, not pushed.
+- Branch: `main`, **25 commits** ahead of `origin/main` after this polish
+  commit (24 before it). Not pushed.
 - Working tree: clean.
-- Total night diff: 133 files, 60,805 insertions (code + logs + notes).
+- Total night diff: ~140+ files, 62k+ insertions (code + logs + notes).
 - File counts in `qwen36-fast/`:
-  - `bench/*.log`: 78 (raw logs)
-  - `bench/*.md`: 13 (analysis per iteration)
-  - `notes/*.md`: 11 (decision records)
-  - `patches/`: 7 files (5 patches + Dockerfile + inject_mtp.py + upstream-pr-draft/ subdir)
-  - `build-artifacts/qwen36-27b-mtp-merged.gguf`: 12 GiB (gitignored, regeneratable via `patches/inject_mtp.py`)
-  - `deps/llama.cpp/`: gitignored (shallow clone + ROCm build)
+
+  | Path | Count | Notes |
+  |---|---:|---|
+  | `bench/*.log` | 86 | raw logs (iter-26 added 8 workload-diversity logs) |
+  | `bench/*.md` | 14 | analysis per iteration (incl. 15-workload-diversity) |
+  | `notes/*.md` | 11 | decision records |
+  | `patches/` | 7 | 5 patches + Dockerfile + inject_mtp.py + upstream-pr-draft/ |
+  | `prompts/` | 4 | prompt_code + iter-26's prompt_{codegen,chat,nl} |
+  | top-level .md | 3 | README + MORNING + CHANGELOG |
+  | `build-artifacts/` | 2 gitignored | mtp-merged.gguf (12 GiB) + lookup-cache-static.bin (15 MB) |
+  | `deps/llama.cpp/` | gitignored | shallow clone + ROCm build |
+
+The night ended at Thu 06:00 CEST with the repo in this state.
 
 ### Next-move recommendation (ordered by effort:gain)
 
