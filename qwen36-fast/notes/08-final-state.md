@@ -210,6 +210,57 @@ per-step drafter pays its overhead every token; if the base decode
 is already bandwidth-saturated, K=1 savings cannot outpace the
 overhead. This is an architectural truth, not a bug.
 
+### Iter 18: Definitive MTP structural limitation
+
+After iter-15 we hypothesised that the MTP K>1 regression could be
+unlocked by removing an alleged `n_max=1` hardcode at
+`tools/server/server.cpp:1309`. Iter-18 investigated this claim and
+**ruled it out**:
+
+- The actual line `backend_sampling &= !(slot.can_speculate() &&
+  task.params.speculative.n_max > 0)` is a **boolean gate** that
+  disables backend sampling when spec is active, NOT a clamp on
+  draft length.
+- The real structural cap is in `common/speculative.cpp:603-649`:
+  `common_speculative_state_mtp::draft()` calls
+  `llama_get_mtp_logits()`, argmaxes **one** vocab-sized row, and
+  pushes exactly one token. `params.n_max` is declared
+  `GGML_UNUSED`. The function body is not a `for (k < n_max)` loop.
+- The MTP logits tensor itself is shaped as one vocab row by
+  construction at `src/llama-context.cpp:1819-1835`. One forward
+  pass returns one candidate. There is no K-dim.
+- Verified empirically on the PR #20700 build: `--draft-max ∈
+  {1,2,3,4}` all produce bit-identical output, tps ≈ 7.6,
+  alpha=1.00, `draft_n=127, accepted=127`. **`--draft-max` is a
+  no-op for MTP.**
+
+**Definitive conclusion**: MTP on Qwen3.6 in llama.cpp as implemented
+by PR #20700 is **structurally single-token**. This is not a
+hardcode or a one-line bug. Unlocking K>1 would require:
+
+1. ~400-600 LoC across `src/models/qwen35.cpp`, `src/llama-graph.h`,
+   `src/llama-context.cpp`, `common/speculative.cpp`,
+   `include/llama.h` to produce and consume a K-row logits tensor.
+2. **A retrained MTP head for shift-k lookahead.** The released head
+   was trained to predict token at position t+1 given hidden state
+   at t. There is no training signal for predicting t+2..t+K from
+   the same hidden state; you'd need either a different head per
+   shift (K heads), or a single head trained with shift-k targets,
+   or an autoregressive cascade that uses the head's own t+1
+   prediction as input for t+2 (which re-introduces per-step
+   overhead and defeats the bandwidth economics).
+
+**On bandwidth-bound hardware (256 GB/s), even if K=4 MTP cascaded
+cleanly, the per-step MTP forward cost would eat most of the savings.
+The released MTP head cannot beat the iter-13 lookup result (30 tps)
+on this APU without also being re-architected lighter. EAGLE-3 (PR
+#21437) is structurally better-suited because its draft head is
+detached from the backbone forward and can be quantized/shrunk
+independently.**
+
+Patch `patches/llamacpp-unlock-mtp-k.patch` is empty-by-design — it
+documents the structural reason no patch was written.
+
 ### Iter 16: Lookup tuning sweep
 
 - Built a 15 MB static lookup cache from 10 MB code corpus (lifeos +
@@ -278,33 +329,65 @@ is what holds.
 
 ## 6. Still open / plausible future paths
 
-Ordered by effort:gain tradeoff:
+Ordered by effort:gain tradeoff (revised after iter-18 ruling):
 
-1. **Fix GDN rollback for dm>=6 coherence.** 200-400 LoC in
+1. **EAGLE-3 port (PR #21437 on top of #18039)** — NOW the top path.
+   PR #18039 adds base EAGLE3 infra + LLM_ARCH_EAGLE3 + encoder/decoder
+   graph (`src/models/eagle3.cpp`); PR #21437 extends it with hybrid
+   recurrent-state support and `qwen35` / `qwen35moe` integration
+   (2889-line diff, 34 files). Drafter head is a 1-layer transformer,
+   detached from the backbone forward → per-step cost is a fraction of
+   the 27B backbone read. On bandwidth-bound hardware this is
+   structurally the right shape. **No Qwen3.6-27B EAGLE3 drafter
+   exists on HF** — training one is part of the work. See
+   `notes/09-eagle3-future-path.md` for a sequential recipe.
+   Projected: alpha ~= 0.55-0.70 → 35-45 tps on Q2_K_XL.
+   Effort: 2-4 weeks (port + drafter training + hybrid tuning).
+
+2. **Fix GDN rollback for dm>=6 coherence.** 200-400 LoC in
    `src/llama-memory-recurrent.cpp`. Projected gain: clean 36-40 tps
    (the wall-clock is already there, just degenerate). 3-5 days incl.
    multi-backend regression.
-2. **EAGLE-3 port** (PR #21437). 1-2 weeks C++ work + drafter head
-   training. Projected: alpha ~= 0.80 on bandwidth-bound hardware ->
-   40+ tps. Structurally cleaner than MTP on our memory budget.
-3. **Lightweight MTP** (prune head to <10% of backbone cost). Requires
-   training (not in-tree). Projected: K=1 flips positive, 12-15 tps
-   at K=1; could stack with lookup.
-4. **Prompt-specific static lookup caches** for repeat-heavy workloads
+
+3. **Prompt-specific static lookup caches** for repeat-heavy workloads
    (editing one codebase, doc rewriting, code review over a fixed
    corpus). Glue work, hours. Projected: 33-36 tps on matched prompts.
-5. **Wait for PR #20700 to mature + K>=2 cascade**. Author self-declared
-   WIP, no maintainer reviews, 1-3+ months. Even then, MTP K=1 regresses
-   on 256 GB/s - needs K>=3 cascade, which the PR's graph supports
-   (`src/models/qwen35.cpp:536-539`) but the server plumbing does not.
-6. **vLLM-ROCm migration**. Different inference stack entirely, has
-   DFlash drafter in mainline, handles hybrid rollback cleanly. Weeks
-   of porting work + Harbor integration rework.
+
+4. **MTP-head retraining for shift-k lookahead** — **the only
+   MTP-path forward** after iter-18. Not a llama.cpp patch; a
+   research project:
+   - 400-600 LoC in llama.cpp to produce and consume K-row logits
+     from one MTP forward (graph + `llama_get_mtp_logits` + speculative).
+   - Retrain the MTP head with shift-k targets (K separate heads, or
+     a single shift-conditioned head). Requires access to Qwen's
+     training corpus or a good distillation proxy.
+   - Per-step MTP overhead on this APU (~45 ms at K=1) likely keeps
+     wins below EAGLE-3. Documented for completeness.
+   Projected: 12-18 tps at best. Effort: months.
+
+5. **Lightweight custom MTP.** Same burden as above minus the shift-k
+   head research, plus training a small-footprint drafter. Worse
+   upside than EAGLE-3 for similar effort. Projected: 12-15 tps.
+
+6. **vLLM-ROCm migration**. Different inference stack entirely. DFlash
+   (PR #22105) in llama.cpp is WIP / conflicting and, per the PR's
+   own benchmarks, hybrid target speedup is intrinsically limited by
+   recurrent-state rollback overhead. z-lab publishes
+   `z-lab/Qwen3.5-27B-DFlash` and `z-lab/Qwen3.6-35B-A3B-DFlash` but
+   **not** `z-lab/Qwen3.6-27B-DFlash` — same drafter-weights gap as
+   EAGLE-3. Weeks of porting work + Harbor integration rework.
+
 7. **Port iter-11 server-side test.** Our can_seq_rm patch was never
-   exercised - llama-lookup skips the probe. Running
+   exercised — llama-lookup skips the probe. Running
    `llama-server --spec-type ngram-cache` against the patched binary
    would validate the patch fires. Low-risk, hours of work. Doesn't
    improve tps but closes the verification loop.
+
+8. **Wait for PR #20700 to mature** — **DEMOTED after iter-18.**
+   Even if the PR merges cleanly, MTP is structurally single-token in
+   llama.cpp's current shape. Merging PR #20700 as-is does not unlock
+   K>1 and does not unlock tps on this hardware. Treat #20700 as a
+   correctness milestone for CUDA/MTP users, not a speedup for us.
 
 ## 7. Lessons for Ivan's future LLM work on Strix Halo
 

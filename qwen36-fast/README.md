@@ -60,6 +60,13 @@ loops / gibberish.
 | Plain on MTP-merged GGUF | Q2_K_XL+MTP F16 | 11.91 | - | yes | bench/08-mtp-spec-v2.md |
 | MTP K=1 (PR #20700) | Q2_K_XL+MTP merged | 7.80 | 1.00 | yes | bench/08-mtp-spec-v2.md |
 | MTP K=2 (PR #20700) | Q2_K_XL+MTP merged | 7.76 | 1.00 | yes (K=1 effective) | bench/08-mtp-spec-v2.md |
+| MTP K=3 (iter-18) | Q2_K_XL+MTP merged | ~7.6 | 1.00 | yes (K=1 effective) | iter-18 log |
+| MTP K=4 (iter-18) | Q2_K_XL+MTP merged | ~7.6 | 1.00 | yes (K=1 effective) | iter-18 log |
+
+**Note on the MTP K-sweep (iter-18):** K={1,2,3,4} produce **bit-identical
+output** and identical `draft_n=127, accepted=127` counters. `--draft-max`
+is a **no-op** for the MTP path: draft length is structurally 1 per step
+regardless of CLI argument.
 
 ## What worked
 
@@ -86,18 +93,40 @@ loops / gibberish.
 
 ## What didn't and why
 
-1. **MTP via PR #20700 regresses on Strix Halo.** At K=1 with alpha=1.00,
-   decode drops from 11.91 -> 7.80 tps (-35%). Per-step cost breakdown:
-   plain step 83 ms; MTP K=1 step 128 ms. The extra cost is the 65th
-   MTP transformer block (attention + 5120x17408 FFN + vocab matmul on
-   32768 trimmed vocab) + a 2-token verify ubatch on the 27B backbone.
-   On CUDA datacenter parts (>1 TB/s HBM) this overhead hides behind
-   memory stalls and alpha=1.00 wins. On 256 GB/s LPDDR5x it is
-   purely additive: we are already at 64-70% of BW, there is no idle
-   bandwidth for the MTP layer to hide behind. **PR #20700 also
-   hardcodes `n_max=1` at `tools/server/server.cpp:1309`**, so `--draft-max>=2`
-   silently caps; true K>=2 cascade would need
-   `build_mtp_head` recursion plumbing that the PR does not ship.
+1. **MTP via PR #20700 regresses on Strix Halo — AND is structurally
+   single-token by design (iter-18 definitive ruling).** At K=1 with
+   alpha=1.00, decode drops from 11.91 -> 7.80 tps (-35%). Per-step
+   cost breakdown: plain step 83 ms; MTP K=1 step 128 ms. The extra
+   cost is the 65th MTP transformer block (attention + 5120x17408 FFN
+   + vocab matmul on 32768 trimmed vocab) + a 2-token verify ubatch on
+   the 27B backbone. On CUDA datacenter parts (>1 TB/s HBM) this
+   overhead hides behind memory stalls and alpha=1.00 wins. On 256
+   GB/s LPDDR5x it is purely additive: we are already at 64-70% of BW,
+   no idle bandwidth for the MTP layer to hide behind.
+
+   **Iter-18 also ruled out the K>=2 cascade hypothesis structurally.**
+   The earlier "n_max=1 hardcode at `tools/server/server.cpp:1309`" note
+   was wrong: that line is a boolean gate, not a clamp. The real cap
+   lives in `common/speculative.cpp:603-649`
+   (`common_speculative_state_mtp::draft()`), which argmaxes **ONE**
+   vocab-sized vector returned by `llama_get_mtp_logits()` and pushes
+   exactly one draft token per step — `params.n_max` is declared
+   `GGML_UNUSED`. The MTP logits tensor itself is single-vocab-row by
+   construction in `src/llama-context.cpp:1819-1835`: one forward pass,
+   one candidate. Running the merged GGUF with
+   `--draft-max ∈ {1,2,3,4}` produces bit-identical output, tps ~=7.6,
+   alpha=1.00, `draft_n=127, accepted=127` — `--draft-max` is a no-op
+   for MTP, confirmed empirically.
+
+   Unlocking a real K>1 cascade would require ~400-600 LoC across
+   `src/models/qwen35.cpp`, `src/llama-graph.h`, `src/llama-context.cpp`,
+   `common/speculative.cpp`, `include/llama.h` **plus retraining the
+   MTP head for shift-k lookahead** (the released head predicts only
+   position t+1 given hidden state at t; no ground truth for t+2..t+K).
+   This is not a llama.cpp bug — it is the shape of the head Qwen3.6
+   was trained with. On bandwidth-bound hardware, MTP K=1 **cannot**
+   beat lookup; any MTP-based 40-tps story on this APU requires a
+   retrained drafter, not a patch.
 2. **Gated DeltaNet rollback degenerates at dm>=6.** The iter-16 sweep
    reaches 36-52 tps wall-clock at dm>=8 but the output is token loops
    (" wants wants", "111111", " ** ** **"). PR #20700's fuzzy `seq_rm`
@@ -169,34 +198,52 @@ Output is a coherent code review in Markdown.
 The numbers in parentheses are this-author's best estimate, not promises.
 All require real engineering, none are 1-day fixes.
 
-1. **Fix GDN rollback for high draft-max** — at dm=5 we get 29-31 tps
+1. **EAGLE-3 port (PR #21437 on top of #18039)** — **the single most
+   promising path**. EAGLE-3's draft head is a dedicated 1-layer
+   transformer that runs in parallel with target verify, NOT embedded
+   in the backbone forward. Per-step drafter cost is a small fraction
+   of the 27B backbone (vs MTP's 45 ms full block). #21437
+   specifically adds Qwen3.5 linear-attention EAGLE3 support (Qwen3.6
+   should be a small delta since it shares the `qwen35` arch). No
+   EAGLE-3 drafter weights exist for Qwen3.6-27B yet — training one
+   is part of the effort. Details: `notes/09-eagle3-future-path.md`.
+   Estimate: 2-4 weeks total (C++ port + drafter training + hybrid
+   rollback tuning). Projected: alpha ~= 0.55-0.70 -> ~35-45 tps on
+   Q2_K_XL (upper end plausibly hits target).
+2. **Fix GDN rollback for high draft-max** — at dm=5 we get 29-31 tps
    clean. The dm=8+ sweep shows 36-52 tps wall-clock is physically
    present but degenerate. Fixing `llama_memory_recurrent::seq_rm`
    checkpoint-ring sizing + verify-batch bounds for dm>=6 should unlock
    another ~20-30% cleanly. Estimate: 200-400 LoC in
    `src/llama-memory-recurrent.cpp`, 3-5 days incl. regression tests
    across ROCm/CUDA/Metal. Projected: ~36-40 tps.
-2. **EAGLE-3 port (PR #21437)** — isolated draft head, runs once in
-   parallel with the target verify batch. Structurally better-suited to
-   bandwidth-bound hardware than MTP (smaller, detached from target
-   forward). Estimate: 1-2 weeks C++ port work + drafter head training.
-   Projected: alpha ~= 0.80 -> ~40+ tps.
-3. **Lightweight MTP** — the current MTP head is ~380M params (a full
-   transformer block on a 27B backbone is ~1.4% of total, but it runs
-   every step and adds ~45 ms). Prune to <10% of backbone cost
-   (half the FFN width or single-head attention) -> K=1 savings
-   outweigh overhead. Requires training, not in-tree. Projected:
-   12-15 tps at K=1, could stack with lookup.
-4. **Prompt-specific static lookup caches** — if the workload is
+3. **Prompt-specific static lookup caches** — if the workload is
    repeat-heavy (e.g. editing a specific codebase, doc rewriting,
    code review over a fixed corpus), pre-built static caches matched
    to the workload should recover the dynamic-cache alpha (0.85-0.92)
    without warm-up cost. Our generic code-corpus static cache did not
    overlap the benchmark prompt and hurt. Per-project caches are a few
    hours of glue. Projected: ~33-36 tps on matched workloads.
-5. **vLLM-ROCm migration** — vLLM has the DFlash draft stack in
-   mainline (Qwen3.6-35B-A3B drafter published) and handles hybrid
-   rollback more cleanly than llama.cpp. Different inference stack
+4. **Retrain MTP head for shift-k lookahead** — theoretical-only path
+   for unlocking K>1 on the current PR #20700 infrastructure. Would
+   require: (a) 400-600 LoC in llama.cpp to produce and consume K
+   logits tensors from a single MTP forward (graph + context API +
+   speculative.cpp), (b) a retrained drafter head that predicts t+1..t+K
+   given hidden state at t — Qwen's released MTP head only predicts
+   t+1 (single-shift). No training data or recipe is public; this is
+   research, not engineering. Even if it worked, per-step MTP overhead
+   on this APU would likely keep it below EAGLE-3 on an effort-to-gain
+   basis. Documented for completeness; **do not prioritise**.
+5. **Lightweight custom MTP** — train a *new* MTP head much smaller
+   than the released one (<10% of backbone cost), run K=1. Same
+   training+integration burden as above but less graph work. Requires
+   training compute. Projected: 12-15 tps, worse than EAGLE-3.
+6. **vLLM-ROCm migration (DFlash, PR #22105 upstream-side)** —
+   vLLM has DFlash in mainline and z-lab publishes drafters for many
+   Qwen3.5/3.6 variants, though NO Qwen3.6-27B DFlash drafter exists
+   at the time of writing (only Qwen3.5-27B-DFlash and
+   Qwen3.6-35B-A3B-DFlash). Hybrid-target speedup is intrinsically
+   limited per PR #22105's own evaluation. Different inference stack
    entirely; weeks of porting / ops work to match Harbor integration.
 
 ## Files
@@ -212,6 +259,8 @@ All require real engineering, none are 1-day fixes.
 - `notes/06-upstream-survey.md` — PR #19493 / PR #20700 / EAGLE3 status.
 - `notes/07-pr20700-port-plan.md` — file-by-file PR #20700 inventory.
 - `notes/08-final-state.md` — postmortem + lessons for future runs.
+- `notes/09-eagle3-future-path.md` — EAGLE-3 (PR #21437) + DFlash
+  (PR #22105) research for the next run at 40 tps.
 - `bench/01-baseline-q4km.md` — Q4_K_M baseline.
 - `bench/02-lookup-spec.md` — first lookup run (iter-6, bug noted).
 - `bench/03-low-bit-quants.md` — Q3/Q2/IQ3 sweep.
@@ -236,9 +285,18 @@ All require real engineering, none are 1-day fixes.
 
 ## Known issues / hazards
 
-- **PR #20700 hardcodes `n_max=1` in `tools/server/server.cpp:1309`.**
-  Any MTP K>=2 is silently capped to K=1. Not a bug in our code, but
-  important: don't trust `--draft-max N` on the MTP path above 1.
+- **MTP on PR #20700 is structurally single-token (iter-18 ruling).**
+  `--draft-max N` is a no-op on the MTP path. The cap is NOT the earlier
+  alleged hardcode at `tools/server/server.cpp:1309` (which is a
+  boolean gate, not a clamp); it is in `common/speculative.cpp:603-649`
+  where `common_speculative_state_mtp::draft()` argmaxes one
+  vocab-sized vector from `llama_get_mtp_logits()` and pushes exactly
+  one token per step, with `params.n_max` marked `GGML_UNUSED`. The
+  MTP graph produces a single-row logits tensor
+  (`src/llama-context.cpp:1819-1835`). K>1 would need ~400-600 LoC
+  **and** a retrained shift-k head. See
+  `patches/llamacpp-unlock-mtp-k.patch` (empty-by-design) for
+  references.
 - **Env-relink during iter-16 rebuild.** Building `llama-lookup-create`
   with ninja during iter-16 relinked `libllama-common.so.0` to the
   PR #20700 artifact. iter-13's 30.05 tps was measured against the
