@@ -1,0 +1,13 @@
+K=2 settings:
+  n_predict=256 n_prompt=4
+  predicted_ms=33629
+  predicted_per_second=7.613
+  prompt_per_second=26.625
+  draft_n=127
+  draft_n_accepted=127
+  alpha=1.000
+  spec.type=mtp
+  spec.n_max=3
+  spec.n_min=1
+  stop_type=limit
+  content[:160]="\n\n<think>\nHere's a thinking process:\n\n1.  **Understand User Request:**\n   - Function name: `merge_sorted_lists(lists)`\n   - Input: A list of sorted lists of int"

@@ -1,0 +1,82 @@
+From: qwen36-fast iter-17
+Subject: [PATCH] attempt to unlock K>1 in MTP speculative decoding
+
+This patch explores what it would take to make `--draft-max N` with
+`--spec-type mtp` actually produce N draft tokens per step rather than 1.
+
+**Finding: There is no `n_max = 1` hardcode to remove.**
+
+The iter-15 claim of a cap at `tools/server/server.cpp:1309` was inaccurate.
+That line actually reads:
+
+    backend_sampling &= !(slot.can_speculate() && task.params.speculative.n_max > 0);
+
+— a boolean gate on backend sampling, not a value clamp.
+
+The real constraint is architectural, in `common/speculative.cpp`:
+`common_speculative_state_mtp::draft()` (lines 603-649) is hard-coded to
+produce **at most 1 draft token per call**:
+
+  1. It reads `llama_get_mtp_logits(ctx_tgt)` — a SINGLE vocab-sized vector
+     of logits that the main-model decode stashed on the GPU.
+  2. It argmaxes those logits → one token.
+  3. `result.push_back(draft_token)` — pushes exactly one.
+  4. Returns.
+
+`params.n_max` is not even read in the function body (`GGML_UNUSED(params)`).
+Upping `--draft-max` can only ever be a no-op for MTP on PR #20700.
+
+**Why this is not a 20-30 LoC fix:**
+
+To produce K>1 tokens, we'd need one of:
+
+(a) Chained single-token MTP calls on the DRAFT context.
+    Each additional token would require a fresh micro-decode that runs ONLY
+    the MTP head on a 1-token batch seeded with the just-drafted token.
+    No such API exists in llama.h. `llama_decode` always runs the full
+    backbone, which is exactly what we're trying to avoid.
+
+(b) Re-architect `build_mtp_head` to emit `t_logits_mtp` of shape
+    `[n_vocab, K]` — i.e. a K-step unrolled cascade inside one graph.
+    The existing code at qwen35.cpp:536-539 IS a cascade loop, but it
+    iterates over DISTINCT MTP layers (DeepSeek-MTP style, where multiple
+    `nextn.eh_proj` tensors stack one after another to IMPROVE a single
+    token's prediction — not to produce multiple future tokens).
+    Line 533: `res->t_logits_mtp = mtp_logits;` — overwrites each
+    iteration; only the LAST layer's output is retained.
+
+    Adding a genuine multi-token cascade would require:
+      - K separate `mtp_logits_k` tensors in `llm_graph_result`
+      - Per-K argmax → embedding → next-layer input wiring
+      - Per-K buffer extraction in `llama-context.cpp:1819-1835`
+      - Per-K KV slot management (each lookahead token needs its own
+        attention position)
+      - Per-K recurrent-state checkpoints for the Gated DeltaNet layers
+
+    Conservative estimate: 400-600 LoC across 6+ files. Out of scope for a
+    timeboxed iteration.
+
+(c) Duplicate the single MTP layer K times in the GGUF (bump
+    `nextn_predict_layers = 1 → K`). This runs the graph-level cascade
+    over K identical layers, BUT:
+      - Only the K-th (deepest) token's logits end up in `t_logits_mtp`
+        (same issue as (b))
+      - Even if we got intermediate layers' logits, they'd all predict the
+        SAME position relative to the backbone — DeepSeek-MTP's design
+        choice. Qwen3.6 is not trained for shift-k prediction.
+      - α would collapse (the untrained deeper heads produce noise for
+        a task they weren't trained for)
+
+**Conclusion: PR #20700 MTP on Qwen3.6 is intrinsically a single-token
+drafter. K>1 cannot be unlocked by patching the server or the speculative
+state; it would require retraining the MTP head with shift-k targets AND
+rewriting the graph cascade.**
+
+This file is intentionally empty of actual code changes — it documents
+WHY the cap is not a hardcode. The empirical evidence is in
+`bench/10-mtp-cascade.md`: K=1,2,3,4 all produce identical output,
+identical `draft_n=127` out of 256 predicted tokens, at ~7.6 tps (30%
+regression vs Q2_K_XL baseline of 13.82 tps).
+
+No patch is applied. Reverts cleanly (`git apply --check` will report no
+hunks to apply).
