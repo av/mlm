@@ -54,6 +54,7 @@ Fully self-contained (tested under `env -i bash`). `--help` / `--short` supporte
 - **`build-artifacts/qwen36-27b-mtp-merged.gguf` (12 GiB, untracked)** works but MTP itself regresses tps 35% on Strix Halo — **don't enable MTP for production**. Kept only for forensic inspection of the K=1 cap.
 - **MTP in PR #20700 is STRUCTURALLY K=1** — `common/speculative.cpp:603-649` argmaxes one token. `--draft-max` is a no-op there. Iter-18's definitive ruling; don't waste time on --draft-max tuning for MTP.
 - **Static lookup cache (15 MiB) HURTS when prompt doesn't overlap** (iter-16). Leave `run-best.sh` using dynamic cache; don't add `--lookup-cache-static`.
+- **Cross-session dynamic-cache persistence HURTS too** (iter-29, `bench/17-cold-warm-cache.md`). First message: expect ~26 tps while the dynamic cache warms in-prompt (α=53%). Subsequent messages with persisted cache: ~23-25 tps and α collapses to 10-36% because stochastic prior trajectories poison the cache. **Don't enable `--lookup-cache-dynamic` with persistent storage across user sessions.**
 - **Disk: 50 GiB of GGUFs cached** (3 unused quants are 36 GiB prunable). See `notes/10-disk-usage.md`.
 
 ## Repo state
