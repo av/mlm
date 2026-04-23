@@ -1,0 +1,80 @@
+print_info: mrope sections        = [11, 11, 10, 0]
+[MTP-SEQRM] seq_id=0, p0=1, p1=2147483647, tail_pos=1, searching for checkpoint at pos<=0
+[MTP-SEQRM]   cell[0] pos=1
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+common_context_can_seq_rm: the target context does not support partial sequence removal
+srv    load_model: speculative decoding will use checkpoints
+slot   load_model: id  0 | task -1 | speculative decoding context initialized
+slot   load_model: id  1 | task -1 | speculative decoding context initialized
+slot   load_model: id  2 | task -1 | speculative decoding context initialized
+slot   load_model: id  3 | task -1 | speculative decoding context initialized
+prompt eval time =    5749.01 ms /  1767 tokens (    3.25 ms per token,   307.36 tokens per second)
+       eval time =       0.00 ms /     1 tokens (    0.00 ms per token, 1000000.00 tokens per second)
+statistics ngram_cache: #calls(b,g,a) = 1 0 0, #gen drafts = 0, #acc drafts = 0, #gen tokens = 0, #acc tokens = 0, dur(b,g,a) = 0.002, 0.000, 0.000 ms
+slot update_batch: id  2 | task 4 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  2 | task 4 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  2 | task 4 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  2 | task 4 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  2 | task 4 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  2 | task 4 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  2 | task 4 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  2 | task 4 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  2 | task 4 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  2 | task 4 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  2 | task 4 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  2 | task 4 | draft size 8 exceeds max 4, truncating
+prompt eval time =     427.01 ms /    48 tokens (    8.90 ms per token,   112.41 tokens per second)
+       eval time =   29055.31 ms /   384 tokens (   75.66 ms per token,    13.22 tokens per second)
+draft acceptance rate = 1.00000 (   29 accepted /    29 generated)
+statistics ngram_cache: #calls(b,g,a) = 1 353 13, #gen drafts = 13, #acc drafts = 13, #gen tokens = 98, #acc tokens = 29, dur(b,g,a) = 0.001, 2.855, 0.008 ms
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 7 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 4, truncating
+slot update_batch: id  1 | task 371 | draft size 8 exceeds max 1, truncating
+prompt eval time =    5750.97 ms /  1776 tokens (    3.24 ms per token,   308.82 tokens per second)
+       eval time =   43531.85 ms /   512 tokens (   85.02 ms per token,    11.76 tokens per second)
+draft acceptance rate = 1.00000 (  119 accepted /   119 generated)
