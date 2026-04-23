@@ -1,6 +1,6 @@
 # Morning briefing: Qwen3.6-27B fast-decode overnight run
 
-**Date**: 2026-04-23, started 00:20 CEST, ended 06:00 CEST (~5h40m, 22 iterations)
+**Date**: 2026-04-23, started 00:20 CEST, ended 06:00 CEST (~5h40m, 24 iterations, 23 commits)
 
 ## 30-second answer
 
@@ -21,10 +21,11 @@ Fully self-contained (tested under `env -i bash`). `--help` / `--short` supporte
 
 ## What to read first (in this order)
 
-1. **`README.md`** (337 lines) — full context, current best, hazards, reproducibility.
-2. **`notes/08-final-state.md`** (479 lines) — iteration-by-iteration postmortem, numbers table, what was ruled out.
-3. **`bench/11-canonical-run.md`** (84 lines) — the reproducibility-verified number (30.21 tps full-mode).
-4. **`patches/upstream-pr-draft/PR-DESCRIPTION.md`** (191 lines) — ready to file upstream as-is.
+1. **`README.md`** — full context, current best, hazards, reproducibility.
+2. **`CHANGELOG.md`** — the full night told chronologically with commit hashes.
+3. **`notes/08-final-state.md`** — iteration-by-iteration postmortem, numbers table, what was ruled out.
+4. **`bench/11-canonical-run.md`** — the reproducibility-verified number (30.21 tps full-mode).
+5. **`patches/upstream-pr-draft/PR-DESCRIPTION.md`** — ready to file upstream as-is.
 
 ## The ONE decision for today
 
@@ -55,5 +56,6 @@ Fully self-contained (tested under `env -i bash`). `--help` / `--short` supporte
 
 ## Repo state
 
-- 20 commits on `main` ahead of `origin/main` (will be 21 after this iteration's commit).
+- 23 commits on `main` ahead of `origin/main` after the final CHANGELOG commit.
 - Working tree clean. Nothing sensitive committed. Remote push **not** done — your call.
+- See `CHANGELOG.md` for the full iteration-by-iteration history with commit hashes.

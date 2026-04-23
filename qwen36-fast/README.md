@@ -1,8 +1,9 @@
 # Qwen3.6-27B fast-decode on Strix Halo (gfx1151)
 
-Night run: 2026-04-23 00:20 - 04:30 CEST. Orchestrator log:
-`/tmp/timeboxed-qwen36-fast-1776896422.md`. Iteration notes in `notes/`,
-benchmark numbers + raw logs in `bench/`, local patches in `patches/`.
+Night run: 2026-04-23 00:20 - 06:00 CEST (~5h40m, 24 iterations, 22
+commits). Orchestrator log: `/tmp/timeboxed-qwen36-fast-1776896422.md`.
+Iteration notes in `notes/`, benchmark numbers + raw logs in `bench/`,
+local patches in `patches/`. Chronological history: `CHANGELOG.md`.
 
 ## TL;DR
 
@@ -260,6 +261,8 @@ All require real engineering, none are 1-day fixes.
 ## Files
 
 - `README.md` — this file.
+- `CHANGELOG.md` — chronological 24-iteration night log with commit hashes.
+- `MORNING.md` — 30-second briefing, reproduce instructions, the ONE decision.
 - `notes/00-context.md` — orchestrator snapshot + phased plan + final
   outcome footer.
 - `notes/01-harbor-state.md` — Harbor state when we started, compose bug.
@@ -282,6 +285,12 @@ All require real engineering, none are 1-day fixes.
 - `bench/07-mtp-spec.md` — first MTP attempt (broadcast assert).
 - `bench/08-mtp-spec-v2.md` — MTP running, regresses to 7.80 tps.
 - `bench/09-lookup-tuning.md` — draft-max sweep, lookup saturated ~31 tps.
+- `bench/10-mtp-cascade.md` — iter-18 K-sweep proving MTP is structurally K=1.
+- `bench/11-canonical-run.md` — iter-20 full-mode reproducibility verification
+  (30.21 tps).
+- `bench/12-server-validation.md` — iter-21 llama-server path validates
+  iter-11 patch end-to-end.
+- `bench/14-server-tuning.md` — iter-24 server-side ngram-cache config sweep.
 - `bench/run-best.sh` — reproducible one-shot bench script.
 - `patches/llamacpp-qwen36-spec-decode.patch` — iter-11 can_seq_rm relax.
 - `patches/upstream-pr-draft/` — polished upstream PR materials
