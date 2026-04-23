@@ -245,6 +245,17 @@ All require real engineering, none are 1-day fixes.
    Qwen3.6-35B-A3B-DFlash). Hybrid-target speedup is intrinsically
    limited per PR #22105's own evaluation. Different inference stack
    entirely; weeks of porting / ops work to match Harbor integration.
+7. **Upstream our `can_seq_rm` patch** (ready to file, see
+   `patches/upstream-pr-draft/`) — zero-effort for the upstream
+   community: 32 added / 2 removed lines in `common/common.cpp`,
+   validated end-to-end here via `llama-server` (iter-21, α=1.00) and
+   `llama-lookup` (iter-13, 30.05 tps). Doesn't move the needle on
+   *our* local number, but unblocks every hybrid/recurrent model
+   (Qwen3.5/3.6, Qwen3-Next, GLM4-MoE, Mamba, LFM2, Plamo2,
+   Kimi-Linear) for any drafter kind (lookup, ngram-cache, draft-model,
+   future MTP/EAGLE3). Orthogonal to the Qwen3.5 MTP WIP #20700.
+   Patch + PR-body drafted, applies cleanly to master as of
+   `86db42e`; review and file tomorrow.
 
 ## Files
 
@@ -273,6 +284,9 @@ All require real engineering, none are 1-day fixes.
 - `bench/09-lookup-tuning.md` — draft-max sweep, lookup saturated ~31 tps.
 - `bench/run-best.sh` — reproducible one-shot bench script.
 - `patches/llamacpp-qwen36-spec-decode.patch` — iter-11 can_seq_rm relax.
+- `patches/upstream-pr-draft/` — polished upstream PR materials
+  (format-patch + PR body + README). Ready for Ivan to review and
+  file; applies cleanly to master as of `86db42e`.
 - `patches/llamacpp-pr20700-applied.patch` — PR #20700 snapshot on 0d0764d.
 - `patches/llamacpp-mrope-spec-decode-fix.patch` — iter-7 diagnostic patch.
 - `patches/inject_mtp.py` — merge MTP safetensors into Q2_K_XL GGUF.
