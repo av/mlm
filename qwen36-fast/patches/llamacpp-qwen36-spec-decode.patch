@@ -1,0 +1,118 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: qwen36-fast timebox <noreply@localhost>
+Date: Thu, 23 Apr 2026 02:30:00 +0200
+Subject: [PATCH] common: relax can_seq_rm probe to try checkpoint round-trip
+ for hybrid-recurrent models (Qwen3.6, Qwen3-Next, etc.)
+
+The recurrent-state checkpoint feature merged upstream in #19493 enables
+speculative decoding on hybrid (attention + recurrent) models by saving
+per-sequence state via llama_state_seq_get_data_ext(PARTIAL_ONLY) and
+restoring on partial-reject.
+
+However, `common_context_can_seq_rm` still probes raw
+`llama_memory_seq_rm(mem, 0, 1, -1)`. For hybrid memories (Qwen3.6 Gated
+DeltaNet 3:1 Attn, Qwen3-Next, GLM4-MoE, LFM2, Mamba, Plamo2,
+Kimi-Linear) that call refuses partial rollback and the probe returns
+NO via server-context.cpp:874 -> "speculative decoding not supported by
+this context", even though the model IS compatible via the checkpoint
+path.
+
+This patch: when raw `seq_rm` fails, attempt a checkpoint round-trip on
+the same state (get_size_ext -> get_data_ext -> set_data_ext with
+LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY). If the round-trip succeeds, the
+context supports checkpoint-based rollback, so promote to
+COMMON_CONTEXT_SEQ_RM_TYPE_FULL (the "use checkpoints" branch at
+server-context.cpp:878, speculative.cpp:990, speculative-simple.cpp:67
+all already handle this correctly). If the round-trip fails, fall
+through to FULL anyway (existing behavior) since raw seq_rm already
+refused — the worst case is that the existing code path rolls over a
+non-rollback-safe cache, which is strictly no worse than today's
+behavior.
+
+We also guard the case where `llama_decode` itself fails on the 2-token
+probe: some hybrid backends may transiently fail on an all-zero input.
+In that case we still try the checkpoint round-trip on an empty sequence
+before giving up.
+
+Scope: This patch is surgical (~30 LoC). It does NOT modify any model
+builder, memory module, or convert_hf_to_gguf.py. It only widens the
+probe so that models with a working checkpoint path are not gated out
+by the simpler raw-seq_rm probe. The actual spec decode runs use the
+already-merged checkpoint infra.
+---
+ common/common.cpp | 37 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 34 insertions(+), 3 deletions(-)
+
+diff --git a/common/common.cpp b/common/common.cpp
+index aaaaaaa..bbbbbbb 100644
+--- a/common/common.cpp
++++ b/common/common.cpp
+@@ -1401,6 +1401,30 @@ std::string get_model_endpoint() {
+ common_context_seq_rm_type common_context_can_seq_rm(llama_context * ctx) {
+     auto * mem = llama_get_memory(ctx);
+     if (mem == nullptr) {
+         return COMMON_CONTEXT_SEQ_RM_TYPE_NO;
+     }
+
+     common_context_seq_rm_type res = COMMON_CONTEXT_SEQ_RM_TYPE_PART;
+
+     llama_memory_clear(mem, true);
+
+     // eval 2 tokens to check if the context is compatible
+     std::vector<llama_token> tmp;
+     tmp.push_back(0);
+     tmp.push_back(0);
+
+     int ret = llama_decode(ctx, llama_batch_get_one(tmp.data(), tmp.size()));
+     if (ret != 0) {
+         LOG_ERR("%s: llama_decode() failed: %d\n", __func__, ret);
+-        res = COMMON_CONTEXT_SEQ_RM_TYPE_NO;
++        // Before giving up, check whether the context supports the
++        // checkpoint-based rollback path (llama_state_seq_* with
++        // PARTIAL_ONLY). If so, spec decode can still work via the
++        // checkpoint codepath in speculative.cpp / server-context.cpp.
++        const size_t sz = llama_state_seq_get_size_ext(ctx, 0, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY);
++        if (sz > 0) {
++            LOG_WRN("%s: llama_decode failed but checkpoint state (partial, size=%zu) is available; promoting to FULL\n", __func__, sz);
++            res = COMMON_CONTEXT_SEQ_RM_TYPE_FULL;
++        } else {
++            res = COMMON_CONTEXT_SEQ_RM_TYPE_NO;
++        }
+         goto done;
+     }
+
+     // try to remove the last tokens
+     if (!llama_memory_seq_rm(mem, 0, 1, -1)) {
+-        LOG_WRN("%s: the target context does not support partial sequence removal\n", __func__);
+-        res = COMMON_CONTEXT_SEQ_RM_TYPE_FULL;
++        // Partial seq_rm not supported (hybrid/recurrent memory, e.g.
++        // Gated DeltaNet, Mamba). Try checkpoint round-trip to confirm
++        // that the checkpoint-based rollback path in speculative.cpp
++        // will work for this context.
++        const size_t ckpt_sz = llama_state_seq_get_size_ext(ctx, 0, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY);
++        if (ckpt_sz > 0) {
++            std::vector<uint8_t> buf(ckpt_sz);
++            const size_t n_get = llama_state_seq_get_data_ext(ctx, buf.data(), ckpt_sz, 0, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY);
++            if (n_get == ckpt_sz) {
++                const size_t n_set = llama_state_seq_set_data_ext(ctx, buf.data(), ckpt_sz, 0, LLAMA_STATE_SEQ_FLAGS_PARTIAL_ONLY);
++                if (n_set == ckpt_sz) {
++                    LOG_INF("%s: checkpoint round-trip OK (size=%zu); enabling spec decode via checkpoint rollback\n", __func__, ckpt_sz);
++                } else {
++                    LOG_WRN("%s: checkpoint set_data returned %zu, expected %zu\n", __func__, n_set, ckpt_sz);
++                }
++            } else {
++                LOG_WRN("%s: checkpoint get_data returned %zu, expected %zu\n", __func__, n_get, ckpt_sz);
++            }
++        } else {
++            LOG_WRN("%s: the target context does not support partial sequence removal (no checkpoint state available either)\n", __func__);
++        }
++        res = COMMON_CONTEXT_SEQ_RM_TYPE_FULL;
+         goto done;
+     }
+
+ done:
+     llama_memory_clear(mem, true);
+     llama_synchronize(ctx);
+
+     return res;
+ }

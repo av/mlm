@@ -1,0 +1,24 @@
+ggml_cuda_init: found 1 ROCm devices (Total VRAM: 98304 MiB):
+  Device 0: Radeon 8060S Graphics, gfx1151 (0x1151), VMM: no, Wave Size: 32, VRAM: 98304 MiB
+
+Loading model... |-\|/-\|/-\|/-\|/-\|/-\|/[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=0, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=0, head=0
+-/src/ggml/src/ggml-cuda/binbcast.cu:255: GGML_ASSERT(nb10 % sizeof(src1_t) == 0) failed
+/bld/bin/libggml-base.so.0(+0x1adbb) [0x7f4c1e557dbb]
+/bld/bin/libggml-base.so.0(ggml_print_backtrace+0x21c) [0x7f4c1e55823c]
+/bld/bin/libggml-base.so.0(ggml_abort+0x15b) [0x7f4c1e55841b]
+/bld/bin/libggml-hip.so.0(+0x39fd8c7) [0x7f4c1d1fd8c7]
+/bld/bin/libggml-hip.so.0(_Z16ggml_cuda_op_mulR25ggml_backend_cuda_contextP11ggml_tensor+0xa6) [0x7f4c1d1f90e6]
+/bld/bin/libggml-hip.so.0(+0x3ab324c) [0x7f4c1d2b324c]
+/bld/bin/libggml-hip.so.0(+0x3ab1991) [0x7f4c1d2b1991]
+/bld/bin/libggml-base.so.0(ggml_backend_sched_graph_compute_async+0x817) [0x7f4c1e575877]
+/bld/bin/libllama.so.0(_ZN13llama_context13graph_computeEP11ggml_cgraphb+0xa1) [0x7f4c1e2b32b1]
+/bld/bin/libllama.so.0(_ZN13llama_context14process_ubatchERK12llama_ubatch14llm_graph_typeP22llama_memory_context_iR11ggml_status+0x114) [0x7f4c1e2b5434]
+/bld/bin/libllama.so.0(_ZN13llama_context6decodeERK11llama_batch+0x390) [0x7f4c1e2bc910]
+/bld/bin/libllama.so.0(llama_decode+0xf) [0x7f4c1e2be4af]
+/bld/bin/libllama-common.so.0(_Z25common_context_can_seq_rmP13llama_context+0xd9) [0x7f4c1e7eed59]
+/bld/bin/llama-cli(+0x11616e) [0x557b16ce816e]
+/bld/bin/llama-cli(+0x4e93e) [0x557b16c2093e]
+/lib64/libc.so.6(+0x35b5) [0x7f4c1dca45b5]
+/lib64/libc.so.6(__libc_start_main+0x88) [0x7f4c1dca4668]
+/bld/bin/llama-cli(+0x50775) [0x557b16c22775]
