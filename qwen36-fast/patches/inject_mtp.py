@@ -173,11 +173,19 @@ for shard in SHARDS:
             f.seek(data_offset + start)
             raw = f.read(size)
         data_fp32 = bf16_to_fp32(raw, shape)
-        # Write as F16 to save some space (can't use bf16 across the board since GGUF writer support varies)
-        data_f16 = data_fp32.astype(np.float16)
-        writer.add_tensor(gguf_name, data_f16)
-        mtp_tensors_written += 1
-        print(f"    {tname} -> {gguf_name} {shape} F16")
+        # Norm weights (1D small tensors) MUST be F32 to match backbone convention
+        # (otherwise ggml_cuda_op_mul fails with alignment assertion against F32 activations).
+        # Weights (2D matmul operands) are written as F16 to save space.
+        is_norm = ('norm' in gguf_name)
+        if is_norm:
+            writer.add_tensor(gguf_name, data_fp32)
+            mtp_tensors_written += 1
+            print(f"    {tname} -> {gguf_name} {shape} F32 (norm)")
+        else:
+            data_f16 = data_fp32.astype(np.float16)
+            writer.add_tensor(gguf_name, data_f16)
+            mtp_tensors_written += 1
+            print(f"    {tname} -> {gguf_name} {shape} F16")
 
 print(f"MTP tensors written: {mtp_tensors_written}")
 print(f"Writing GGUF to: {DST_GGUF}")
