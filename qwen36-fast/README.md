@@ -9,18 +9,28 @@ local patches in `patches/`. Chronological history: `CHANGELOG.md`.
 
 - Baseline Q4_K_M: **10.87 tps** (iter-5, bench/01-baseline-q4km.md).
 - Baseline UD-Q2_K_XL: **13.82 tps** (iter-8, bench/03-low-bit-quants.md).
-- Best achieved tonight: **30.05 tps** via lookup speculative decoding on
-  UD-Q2_K_XL with `--draft-max 4`, α=65%, coherent output (iter-13,
-  bench/06-patched-lookup.md). **2.17x** speedup over Q2_K_XL baseline,
-  **2.76x** over the Q4_K_M baseline.
-- User target: **40 tps** — **NOT reached**. Lookup saturates at
-  ~31 tps clean on this hardware (iter-16, bench/09-lookup-tuning.md).
+- **Realistic tps with lookup speculative decoding: 21--32 tps depending on
+  workload, mean ~27 tps** (iter-26, bench/15-workload-diversity.md,
+  4 workload types x 2 reps). Workload breakdown: code-review ~27,
+  chat-with-history ~29, code-generation-from-spec ~25, translation/summary
+  ~26. Speedup range: **1.54x--2.32x** over Q2_K_XL baseline,
+  **1.96x--2.94x** over Q4_K_M baseline.
+- **High end: 30.21 tps** reproducible via `bench/run-best.sh` on the
+  self-referential code-review prompt (iter-20 full-mode verification).
+  That is the prompt-shape best case, not the typical user experience.
+- **Low end: ~21 tps** on natural-language translation / summary where the
+  n-gram cache has no useful matches (alpha drops to 0.22--0.47).
+- User target: **40 tps** — **NOT reached on any workload**. Lookup saturates
+  at ~32 tps best case on this hardware (iter-16 clean +
+  iter-26 chat rep2 at 32.03).
 - MTP head (PR #20700) works end-to-end after a local dtype fix but
   regresses to 7.80 tps on Strix Halo (iter-15,
   bench/08-mtp-spec-v2.md) — the PR is tuned for >1 TB/s CUDA
   datacenter GPUs, not our 256 GB/s bandwidth-bound APU.
-- Reproduce the 30 tps result: `./bench/run-best.sh`
-  (see "Reproduce" below; ~40-60 s wall on 256 tokens).
+- Reproduce the high-end 30 tps result: `./bench/run-best.sh`
+  (see "Reproduce" below; ~40-60 s wall on 256 tokens). For other workloads,
+  swap the prompt file — see the prompts/ directory and
+  bench/15-workload-diversity.md.
 
 ## Hardware / setup
 
@@ -291,6 +301,7 @@ All require real engineering, none are 1-day fixes.
 - `bench/12-server-validation.md` — iter-21 llama-server path validates
   iter-11 patch end-to-end.
 - `bench/14-server-tuning.md` — iter-24 server-side ngram-cache config sweep.
+- `bench/15-workload-diversity.md` — iter-26 4-workload tps range (21--32 tps, mean ~27).
 - `bench/run-best.sh` — reproducible one-shot bench script.
 - `patches/llamacpp-qwen36-spec-decode.patch` — iter-11 can_seq_rm relax.
 - `patches/upstream-pr-draft/` — polished upstream PR materials
@@ -301,6 +312,9 @@ All require real engineering, none are 1-day fixes.
 - `patches/inject_mtp.py` — merge MTP safetensors into Q2_K_XL GGUF.
 - `patches/strix-halo-builder.Dockerfile` — custom builder image.
 - `prompts/prompt_code.txt` — the 1766-token code-review prompt.
+- `prompts/prompt_codegen.txt` — 1080-token code-generation-from-spec prompt (iter-26).
+- `prompts/prompt_chat.txt` — 954-token chat-with-history prompt (iter-26).
+- `prompts/prompt_nl.txt` — 553-token translation/summary prompt (iter-26).
 - `build-artifacts/qwen36-27b-mtp-merged.gguf` — 11.83 GiB MTP-merged
   target model (gitignored).
 - `build-artifacts/lookup-cache-static.bin` — 15 MB static n-gram cache

@@ -1,19 +1,21 @@
 # Morning briefing: Qwen3.6-27B fast-decode overnight run
 
-**Date**: 2026-04-23, started 00:20 CEST, ended 06:00 CEST (~5h40m, 24 iterations, 23 commits)
+**Date**: 2026-04-23, started 00:20 CEST, ended 06:00 CEST (~5h40m, 26 iterations, 26 commits)
 
 ## 30-second answer
 
 - **Goal**: push Qwen3.6-27B on Strix Halo from ~11 tps baseline to 40 tps decode via speculative decoding.
-- **Achieved**: **30.05 tps** (canonical, reproducible; `bench/run-best.sh` in full mode reproduces it @ 30.21 tps). **2.17x over Q2_K_XL baseline, 2.76x over Q4_K_M baseline.**
-- **Gap**: −10 tps / −25% from 40 tps target. The remaining gap is **not reachable on this hardware via any lookup/MTP path available today** — requires EAGLE-3 (~1 week effort) or GDN-rollback kernel fix.
+- **Achieved: 21--32 tps depending on workload** (coding: ~27, chat: ~29, new code: ~25, NL: ~26), measured across 4 realistic prompt types with 2 reps each under default sampling (iter-26, `bench/15-workload-diversity.md`). **Mean 26.8 tps. 1.54x--2.32x over the Q2_K_XL baseline (13.82 tps).**
+- On the best-case self-referential code-review prompt the canonical regime still hits **30.21 tps** (iter-20 full-mode `run-best.sh`), which is the number that stuck in the README for three iterations — that is the *high end* of the range, not the typical experience.
+- **Gap**: typical --10 to --18 tps from the 40 tps target depending on workload. The remaining gap is **not reachable on this hardware via any lookup/MTP path available today** — requires EAGLE-3 (~1 week effort) or a GDN-rollback kernel fix.
 
 ## Reproduce the best result
 
 ```bash
 cd /home/everlier/code/mlm/qwen36-fast && ./bench/run-best.sh
-# expect ~30 tps, alpha ~65%, PASS exit 0 in ~15 s
+# expect 25-32 tps on the code-review prompt, alpha 0.45-0.75, PASS exit 0 in ~15 s
 # fresh-shell verified 2026-04-23 05:50 CEST at 23.7 tps (short mode, cold cache)
+# for other workloads see bench/15-workload-diversity.md (21-32 tps range, mean ~27)
 ```
 
 Script has preflights for GGUF, patched binary, docker, and `/dev/kfd`+`/dev/dri`.
@@ -56,6 +58,7 @@ Fully self-contained (tested under `env -i bash`). `--help` / `--short` supporte
 
 ## Repo state
 
-- 23 commits on `main` ahead of `origin/main` after the final CHANGELOG commit.
+- 26 commits on `main` ahead of `origin/main` after the final CHANGELOG commit.
 - Working tree clean. Nothing sensitive committed. Remote push **not** done — your call.
 - See `CHANGELOG.md` for the full iteration-by-iteration history with commit hashes.
+- iter-26 added workload-diversity bench (`bench/15-workload-diversity.md` + 8 logs + 3 new prompts in `prompts/`).

@@ -1,0 +1,49 @@
+You are an experienced Python/TypeScript engineer. Implement a production-ready rate limiter library in Python from scratch, with no external dependencies beyond the standard library. The caller is a small LLM-serving gateway (think Harbor-style local infra) that needs to protect upstream providers from runaway clients.
+
+Requirements:
+
+1. Expose a single class `RateLimiter` with three algorithms selectable at construction time:
+   - `token_bucket`: capacity N, refill R tokens/second, supports burst up to capacity.
+   - `sliding_window_log`: precise per-client request log with O(log n) prune on each check.
+   - `sliding_window_counter`: memory-cheap approximation that interpolates between the previous and current fixed window.
+
+2. Expose an async method `acquire(key: str, cost: int = 1) -> AcquireResult` where `AcquireResult` is a dataclass with fields `allowed: bool`, `retry_after_ms: int`, `remaining: int`, `reset_at_ms: int`. The method must be safe under concurrent calls from asyncio tasks.
+
+3. Expose a sync method `try_acquire(key, cost=1) -> AcquireResult` for non-async callers.
+
+4. Internal state must be keyed by arbitrary string `key` (a user id, API key hash, or IP). The storage layer is pluggable: provide an in-memory backend by default and a `Storage` protocol that a Redis-backed subclass could implement later. Do not depend on Redis in this implementation; just make sure the protocol fits a classic `INCR/EXPIRE/ZADD/ZREMRANGEBYSCORE` model.
+
+5. The class must support per-key dynamic limits: a `limit_resolver: Callable[[str], Limit]` passed at construction time lets the caller return a different capacity+refill for, say, free-tier vs paid-tier keys. If not supplied, fall back to a single global limit.
+
+6. Accurate monotonic time via `time.monotonic_ns()` throughout — never `time.time()`.
+
+7. The token-bucket implementation must NOT lazily refill on every tick; it must compute the refill from the delta since last consumption. Include a proof-of-correctness comment that explains why this is equivalent to per-tick refill without drift.
+
+8. The sliding-window-log implementation must use a bounded deque per key with a configurable max log size. When the log grows past max, the oldest entries are dropped with a warning log — document this behavior in the docstring.
+
+9. Thread safety: the sync `try_acquire` must be safe from multiple threads. Use a per-key lock with lazy initialization (no global lock). The async `acquire` must be safe across tasks on the same event loop.
+
+10. Include comprehensive docstrings in the numpy style. Include type hints on every public method.
+
+11. Include a small test harness at the bottom of the file (inside `if __name__ == "__main__":`) that exercises each algorithm with a burst of 100 concurrent async calls at a configured 10 rps limit and prints the observed allowed/denied distribution. Use `asyncio.gather`.
+
+12. Export the Limit dataclass, the AcquireResult dataclass, the RateLimiter class, the Storage protocol, and the three algorithm enum values.
+
+13. The file must be single-module, under 500 lines, PEP8-clean, mypy-strict compatible. No third-party imports.
+
+Design constraints to follow:
+
+- Prefer composition over inheritance. The algorithms should be separate internal strategy classes selected by the enum, not subclasses of RateLimiter.
+- Keep the public surface minimal — only what's listed above is exported.
+- Make the in-memory backend use a dict of dicts; do not invent a custom datastructure unless necessary.
+- When cost > capacity, return denied immediately with retry_after_ms equal to the full fill time of `cost` tokens. Never block; the caller is already in an async context.
+- The sliding-window-counter algorithm approximates via `((prev_window_count * fraction_of_prev_window_remaining) + curr_window_count) <= limit`. Implement this exactly, and include the citation in a comment: Kong/Cloudflare's well-known approximation.
+- Do not use `asyncio.Lock` per key unless there's a good reason; prefer a CAS-style retry loop on a versioned state. Justify your choice in a comment block at the top of the async path.
+
+Output format:
+
+- The full Python module, ready to save as `ratelimit.py`.
+- After the code, a short rationale section (no more than 200 words) explaining key design decisions: why composition, how you handled concurrency, and what would change in a Redis-backed version.
+- Do not include a test suite beyond the `__main__` harness. Do not include benchmarks. Do not produce a setup.py, pyproject.toml, or README.
+
+Write complete, working, runnable code. Do not use placeholder TODOs. Do not skip the sliding-window-log implementation because it's tedious. Do not produce pseudo-code.

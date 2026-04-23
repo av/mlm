@@ -1,0 +1,744 @@
+ggml_cuda_init: found 1 ROCm devices (Total VRAM: 98304 MiB):
+  Device 0: Radeon 8060S Graphics, gfx1151 (0x1151), VMM: no, Wave Size: 32, VRAM: 98304 MiB
+common_init_result: fitting params to device memory, for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on
+common_params_fit_impl: getting device memory data for initial parameters:
+common_memory_breakdown_print: | memory breakdown [MiB]     | total    free     self   model   context   compute    unaccounted |
+common_memory_breakdown_print: |   - ROCm0 (8060S Graphics) | 98304 = 20278 + (27965 = 10608 +   16533 +     824) +       50059 |
+common_memory_breakdown_print: |   - Host                   |                   1214 =   682 +       0 +     532                |
+common_params_fit_impl: projected to use 27965 MiB of device memory vs. 20278 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1024 MiB, need to reduce device memory by 8711 MiB
+common_memory_breakdown_print: | memory breakdown [MiB]     | total    free     self   model   context   compute    unaccounted |
+common_memory_breakdown_print: |   - ROCm0 (8060S Graphics) | 98304 = 20255 + (11526 = 10608 +     405 +     513) +       66521 |
+common_memory_breakdown_print: |   - Host                   |                    710 =   682 +       0 +      28                |
+common_params_fit_impl: context size reduced from 262144 to 125184 -> need 8724 MiB less memory in total
+common_params_fit_impl: entire model can be fit by reducing context
+common_fit_params: successfully fit params to free device memory
+common_fit_params: fitting params to free memory took 1.00 seconds
+llama_model_load_from_file_impl: using device ROCm0 (Radeon 8060S Graphics) (0000:c5:00.0) - 20263 MiB free
+llama_model_loader: loaded meta data with 51 key-value pairs and 851 tensors from /models/models--unsloth--Qwen3.6-27B-GGUF/snapshots/82d411acf4a06cfb8d9b073a5211bf410bfc29bf/Qwen3.6-27B-UD-Q2_K_XL.gguf (version GGUF V3 (latest))
+llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+llama_model_loader: - kv   0:                       general.architecture str              = qwen35
+llama_model_loader: - kv   1:                               general.type str              = model
+llama_model_loader: - kv   2:                     general.sampling.top_k i32              = 20
+llama_model_loader: - kv   3:                     general.sampling.top_p f32              = 0.950000
+llama_model_loader: - kv   4:                      general.sampling.temp f32              = 1.000000
+llama_model_loader: - kv   5:                               general.name str              = Qwen3.6-27B
+llama_model_loader: - kv   6:                           general.basename str              = Qwen3.6-27B
+llama_model_loader: - kv   7:                       general.quantized_by str              = Unsloth
+llama_model_loader: - kv   8:                         general.size_label str              = 27B
+llama_model_loader: - kv   9:                            general.license str              = apache-2.0
+llama_model_loader: - kv  10:                       general.license.link str              = https://huggingface.co/Qwen/Qwen3.6-2...
+llama_model_loader: - kv  11:                           general.repo_url str              = https://huggingface.co/unsloth
+llama_model_loader: - kv  12:                   general.base_model.count u32              = 1
+llama_model_loader: - kv  13:                  general.base_model.0.name str              = Qwen3.6 27B
+llama_model_loader: - kv  14:          general.base_model.0.organization str              = Qwen
+llama_model_loader: - kv  15:              general.base_model.0.repo_url str              = https://huggingface.co/Qwen/Qwen3.6-27B
+llama_model_loader: - kv  16:                               general.tags arr[str,2]       = ["unsloth", "image-text-to-text"]
+llama_model_loader: - kv  17:                         qwen35.block_count u32              = 64
+llama_model_loader: - kv  18:                      qwen35.context_length u32              = 262144
+llama_model_loader: - kv  19:                    qwen35.embedding_length u32              = 5120
+llama_model_loader: - kv  20:                 qwen35.feed_forward_length u32              = 17408
+llama_model_loader: - kv  21:                qwen35.attention.head_count u32              = 24
+llama_model_loader: - kv  22:             qwen35.attention.head_count_kv u32              = 4
+llama_model_loader: - kv  23:             qwen35.rope.dimension_sections arr[i32,4]       = [11, 11, 10, 0]
+llama_model_loader: - kv  24:                      qwen35.rope.freq_base f32              = 10000000.000000
+llama_model_loader: - kv  25:    qwen35.attention.layer_norm_rms_epsilon f32              = 0.000001
+llama_model_loader: - kv  26:                qwen35.attention.key_length u32              = 256
+llama_model_loader: - kv  27:              qwen35.attention.value_length u32              = 256
+llama_model_loader: - kv  28:                     qwen35.ssm.conv_kernel u32              = 4
+llama_model_loader: - kv  29:                      qwen35.ssm.state_size u32              = 128
+llama_model_loader: - kv  30:                     qwen35.ssm.group_count u32              = 16
+llama_model_loader: - kv  31:                  qwen35.ssm.time_step_rank u32              = 48
+llama_model_loader: - kv  32:                      qwen35.ssm.inner_size u32              = 6144
+llama_model_loader: - kv  33:             qwen35.full_attention_interval u32              = 4
+llama_model_loader: - kv  34:                qwen35.rope.dimension_count u32              = 64
+llama_model_loader: - kv  35:                       tokenizer.ggml.model str              = gpt2
+llama_model_loader: - kv  36:                         tokenizer.ggml.pre str              = qwen35
+llama_model_loader: - kv  37:                      tokenizer.ggml.tokens arr[str,248320]  = ["!", "\"", "#", "$", "%", "&", "'", ...
+llama_model_loader: - kv  38:                  tokenizer.ggml.token_type arr[i32,248320]  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+llama_model_loader: - kv  39:                      tokenizer.ggml.merges arr[str,247587]  = ["Ġ Ġ", "ĠĠ ĠĠ", "i n", "Ġ t",...
+llama_model_loader: - kv  40:                tokenizer.ggml.eos_token_id u32              = 248046
+llama_model_loader: - kv  41:            tokenizer.ggml.padding_token_id u32              = 248055
+llama_model_loader: - kv  42:                tokenizer.ggml.bos_token_id u32              = 248044
+llama_model_loader: - kv  43:               tokenizer.ggml.add_bos_token bool             = false
+llama_model_loader: - kv  44:                    tokenizer.chat_template str              = {%- set image_count = namespace(value...
+llama_model_loader: - kv  45:               general.quantization_version u32              = 2
+llama_model_loader: - kv  46:                          general.file_type u32              = 10
+llama_model_loader: - kv  47:                      quantize.imatrix.file str              = Qwen3.6-27B-GGUF/imatrix_unsloth.gguf
+llama_model_loader: - kv  48:                   quantize.imatrix.dataset str              = unsloth_calibration_Qwen3.6-27B.txt
+llama_model_loader: - kv  49:             quantize.imatrix.entries_count u32              = 496
+llama_model_loader: - kv  50:              quantize.imatrix.chunks_count u32              = 76
+llama_model_loader: - type  f32:  449 tensors
+llama_model_loader: - type q2_K:  132 tensors
+llama_model_loader: - type q3_K:   83 tensors
+llama_model_loader: - type q4_K:   52 tensors
+llama_model_loader: - type q5_K:   48 tensors
+llama_model_loader: - type q6_K:    1 tensors
+llama_model_loader: - type iq2_xs:    2 tensors
+llama_model_loader: - type iq3_xxs:   54 tensors
+llama_model_loader: - type iq3_s:   15 tensors
+llama_model_loader: - type iq2_s:   10 tensors
+llama_model_loader: - type iq4_xs:    5 tensors
+print_info: file format = GGUF V3 (latest)
+print_info: file type   = Q2_K - Medium
+print_info: file size   = 11.03 GiB (3.52 BPW) 
+load: 0 unused tokens
+load: printing all EOG tokens:
+load:   - 248044 ('<|endoftext|>')
+load:   - 248046 ('<|im_end|>')
+load:   - 248063 ('<|fim_pad|>')
+load:   - 248064 ('<|repo_name|>')
+load:   - 248065 ('<|file_sep|>')
+load: special tokens cache size = 33
+load: token to piece cache size = 1.7581 MB
+print_info: arch                  = qwen35
+print_info: vocab_only            = 0
+print_info: no_alloc              = 0
+print_info: n_ctx_train           = 262144
+print_info: n_embd                = 5120
+print_info: n_embd_inp            = 5120
+print_info: n_layer               = 64
+print_info: n_head                = 24
+print_info: n_head_kv             = 4
+print_info: n_rot                 = 64
+print_info: n_swa                 = 0
+print_info: is_swa_any            = 0
+print_info: n_embd_head_k         = 256
+print_info: n_embd_head_v         = 256
+print_info: n_gqa                 = 6
+print_info: n_embd_k_gqa          = 1024
+print_info: n_embd_v_gqa          = 1024
+print_info: f_norm_eps            = 0.0e+00
+print_info: f_norm_rms_eps        = 1.0e-06
+print_info: f_clamp_kqv           = 0.0e+00
+print_info: f_max_alibi_bias      = 0.0e+00
+print_info: f_logit_scale         = 0.0e+00
+print_info: f_attn_scale          = 0.0e+00
+print_info: n_ff                  = 17408
+print_info: n_expert              = 0
+print_info: n_expert_used         = 0
+print_info: n_expert_groups       = 0
+print_info: n_group_used          = 0
+print_info: causal attn           = 1
+print_info: pooling type          = -1
+print_info: rope type             = 40
+print_info: rope scaling          = linear
+print_info: freq_base_train       = 10000000.0
+print_info: freq_scale_train      = 1
+print_info: n_ctx_orig_yarn       = 262144
+print_info: rope_yarn_log_mul     = 0.0000
+print_info: rope_finetuned        = unknown
+print_info: mrope sections        = [11, 11, 10, 0]
+print_info: ssm_d_conv            = 4
+print_info: ssm_d_inner           = 6144
+print_info: ssm_d_state           = 128
+print_info: ssm_dt_rank           = 48
+print_info: ssm_n_group           = 16
+print_info: ssm_dt_b_c_rms        = 0
+print_info: model type            = 27B
+print_info: model params          = 26.90 B
+print_info: general.name          = Qwen3.6-27B
+print_info: vocab type            = BPE
+print_info: n_vocab               = 248320
+print_info: n_merges              = 247587
+print_info: BOS token             = 248044 '<|endoftext|>'
+print_info: EOS token             = 248046 '<|im_end|>'
+print_info: EOT token             = 248046 '<|im_end|>'
+print_info: PAD token             = 248055 '<|vision_pad|>'
+print_info: LF token              = 198 'Ċ'
+print_info: FIM PRE token         = 248060 '<|fim_prefix|>'
+print_info: FIM SUF token         = 248062 '<|fim_suffix|>'
+print_info: FIM MID token         = 248061 '<|fim_middle|>'
+print_info: FIM PAD token         = 248063 '<|fim_pad|>'
+print_info: FIM REP token         = 248064 '<|repo_name|>'
+print_info: FIM SEP token         = 248065 '<|file_sep|>'
+print_info: EOG token             = 248044 '<|endoftext|>'
+print_info: EOG token             = 248046 '<|im_end|>'
+print_info: EOG token             = 248063 '<|fim_pad|>'
+print_info: EOG token             = 248064 '<|repo_name|>'
+print_info: EOG token             = 248065 '<|file_sep|>'
+print_info: max token length      = 256
+load_tensors: loading model tensors, this can take a while... (mmap = true, direct_io = false)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 63 repeating layers to GPU
+load_tensors: offloaded 65/65 layers to GPU
+load_tensors:   CPU_Mapped model buffer size =   682.03 MiB
+load_tensors:        ROCm0 model buffer size = 10608.32 MiB
+........................................................................................
+common_init_result: added <|endoftext|> logit bias = -inf
+common_init_result: added <|im_end|> logit bias = -inf
+common_init_result: added <|fim_pad|> logit bias = -inf
+common_init_result: added <|repo_name|> logit bias = -inf
+common_init_result: added <|file_sep|> logit bias = -inf
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 125184
+llama_context: n_ctx_seq     = 125184
+llama_context: n_batch       = 2048
+llama_context: n_ubatch      = 512
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = enabled
+llama_context: kv_unified    = false
+llama_context: freq_base     = 10000000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (125184) < n_ctx_train (262144) -- the full capacity of the model will not be utilized
+llama_context:  ROCm_Host  output buffer size =     0.95 MiB
+llama_kv_cache:      ROCm0 KV buffer size =  7824.00 MiB
+llama_kv_cache: size = 7824.00 MiB (125184 cells,  16 layers,  1/1 seqs), K (f16): 3912.00 MiB, V (f16): 3912.00 MiB
+llama_kv_cache: attn_rot_k = 0, n_embd_head_k_all = 256
+llama_kv_cache: attn_rot_v = 0, n_embd_head_k_all = 256
+llama_memory_recurrent:      ROCm0 RS buffer size =   149.62 MiB
+llama_memory_recurrent: size =  149.62 MiB (     1 cells,  64 layers,  1 seqs), R (f32):    5.62 MiB, S (f32):  144.00 MiB
+sched_reserve: reserving ...
+sched_reserve: resolving fused Gated Delta Net support:
+sched_reserve: fused Gated Delta Net (autoregressive) enabled
+sched_reserve: fused Gated Delta Net (chunked) enabled
+sched_reserve:      ROCm0 compute buffer size =   495.00 MiB
+sched_reserve:  ROCm_Host compute buffer size =   264.52 MiB
+sched_reserve: graph nodes  = 3656
+sched_reserve: graph splits = 2
+sched_reserve: reserve took 56.50 ms, sched copies = 1
+common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=0, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=0, head=0
+
+
+You are an experienced Python/TypeScript engineer. Implement a production-ready rate limiter library in Python from scratch, with no external dependencies beyond the standard library. The caller is a small LLM-serving gateway (think Harbor-style local infra) that needs to protect upstream providers from runaway clients.
+
+Requirements:
+
+1. Expose a single class `RateLimiter` with three algorithms selectable at construction time:
+   - `token_bucket`: capacity N, refill R tokens/second, supports burst up to capacity.
+   - `sliding_window_log`: precise per-client request log with O(log n) prune on each check.
+   - `sliding_window_counter`: memory-cheap approximation that interpolates between the previous and current fixed window.
+
+2. Expose an async method `acquire(key: str, cost: int = 1) -> AcquireResult` where `AcquireResult` is a dataclass with fields `allowed: bool`, `retry_after_ms: int`, `remaining: int`, `reset_at_ms: int`. The method must be safe under concurrent calls from asyncio tasks.
+
+3. Expose a sync method `try_acquire(key, cost=1) -> AcquireResult` for non-async callers.
+
+4. Internal state must be keyed by arbitrary string `key` (a user id, API key hash, or IP). The storage layer is pluggable: provide an in-memory backend by default and a `Storage` protocol that a Redis-backed subclass could implement later. Do not depend on Redis in this implementation; just make sure the protocol fits a classic `INCR/EXPIRE/ZADD/ZREMRANGEBYSCORE` model.
+
+5. The class must support per-key dynamic limits: a `limit_resolver: Callable[[str], Limit]` passed at construction time lets the caller return a different capacity+refill for, say, free-tier vs paid-tier keys. If not supplied, fall back to a single global limit.
+
+6. Accurate monotonic time via `time.monotonic_ns()` throughout — never `time.time()`.
+
+7. The token-bucket implementation must NOT lazily refill on every tick; it must compute the refill from the delta since last consumption. Include a proof-of-correctness comment that explains why this is equivalent to per-tick refill without drift.
+
+8. The sliding-window-log implementation must use a bounded deque per key with a configurable max log size. When the log grows past max, the oldest entries are dropped with a warning log — document this behavior in the docstring.
+
+9. Thread safety: the sync `try_acquire` must be safe from multiple threads. Use a per-key lock with lazy initialization (no global lock). The async `acquire` must be safe across tasks on the same event loop.
+
+10. Include comprehensive docstrings in the numpy style. Include type hints on every public method.
+
+11. Include a small test harness at the bottom of the file (inside `if __name__ == "__main__":`) that exercises each algorithm with a burst of 100 concurrent async calls at a configured 10 rps limit and prints the observed allowed/denied distribution. Use `asyncio.gather`.
+
+12. Export the Limit dataclass, the AcquireResult dataclass, the RateLimiter class, the Storage protocol, and the three algorithm enum values.
+
+13. The file must be single-module, under 500 lines, PEP8-clean, mypy-strict compatible. No third-party imports.
+
+Design constraints to follow:
+
+- Prefer composition over inheritance. The algorithms should be separate internal strategy classes selected by the enum, not subclasses of RateLimiter.
+- Keep the public surface minimal — only what's listed above is exported.
+- Make the in-memory backend use a dict of dicts; do not invent a custom datastructure unless necessary.
+- When cost > capacity, return denied immediately with retry_after_ms equal to the full fill time of `cost` tokens. Never block; the caller is already in an async context.
+- The sliding-window-counter algorithm approximates via `((prev_window_count * fraction_of_prev_window_remaining) + curr_window_count) <= limit`. Implement this exactly, and include the citation in a comment: Kong/Cloudflare's well-known approximation.
+- Do not use `asyncio.Lock` per key unless there's a good reason; prefer a CAS-style retry loop on a versioned state. Justify your choice in a comment block at the top of the async path.
+
+Output format:
+
+- The full Python module, ready to save as `ratelimit.py`.
+- After the code, a short rationale section (no more than 200 words) explaining key design decisions: why composition, how you handled concurrency, and what would change in a Redis-backed version.
+- Do not include a test suite beyond the `__main__` harness. Do not include benchmarks. Do not produce a setup.py, pyproject.toml, or README.
+
+Write complete, working, runnable code. Do not use placeholder TODOs. Do not skip the sliding-window-log implementation because it's tedious. Do not produce pseudo-code.[MTP-FINDSLOT] find_slot: n_seq_tokens=512, n_seqs=1, size=1, used=0, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=512, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=55, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=512, n_seqs=1, size=1, used=0, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=512, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=55, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+
+
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+<think>[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+
+
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+</think>[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+
+
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+```[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+python[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=1, head=0
+[MTP-SEQRM] seq_id=0, p0=1088, p1=2147483647, tail_pos=1088, searching for checkpoint at pos<=1087
+[MTP-SEQRM]   cell[0] pos=1088
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+"""[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1088 after 1088 for sequence 0 with 1 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1088 after 1088 for sequence 0 with 1 new tokens
+
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+Production[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+-ready[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+ rate[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+ limiter[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ library for[MTP-SEQRM] seq_id=0, p0=1095, p1=2147483647, tail_pos=1097, searching for checkpoint at pos<=1094
+[MTP-SEQRM]   cell[0] pos=1097
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1097
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1095
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ library[MTP-SEQRM] seq_id=0, p0=1096, p1=2147483647, tail_pos=1097, searching for checkpoint at pos<=1095
+[MTP-SEQRM]   cell[0] pos=1097
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1097
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1096
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ library[MTP-SEQRM] seq_id=0, p0=1097, p1=2147483647, tail_pos=1097, searching for checkpoint at pos<=1096
+[MTP-SEQRM]   cell[0] pos=1097
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1097 after 1097 for sequence 0 with 1 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1097 after 1097 for sequence 0 with 1 new tokens
+ only[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+.[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+
+
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+Im[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+plements[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+ Token[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+ Bucket[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+,[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+ Sl[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+iding[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ Window[MTP-SEQRM] seq_id=0, p0=1108, p1=2147483647, tail_pos=1111, searching for checkpoint at pos<=1107
+[MTP-SEQRM]   cell[0] pos=1111
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1111
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1108
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ Window[MTP-SEQRM] seq_id=0, p0=1109, p1=2147483647, tail_pos=1111, searching for checkpoint at pos<=1108
+[MTP-SEQRM]   cell[0] pos=1111
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1111
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1109
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ Window[MTP-SEQRM] seq_id=0, p0=1110, p1=2147483647, tail_pos=1111, searching for checkpoint at pos<=1109
+[MTP-SEQRM]   cell[0] pos=1111
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1111
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1110
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ Window_Log[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+`,[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=1, head=0
+ and[MTP-SEQRM] seq_id=0, p0=1114, p1=2147483647, tail_pos=1114, searching for checkpoint at pos<=1113
+[MTP-SEQRM]   cell[0] pos=1114
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1114 after 1114 for sequence 0 with 1 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1114 after 1114 for sequence 0 with 1 new tokens
+ `[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+Sl[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+iding[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+_window_log[MTP-SEQRM] seq_id=0, p0=1119, p1=2147483647, tail_pos=1121, searching for checkpoint at pos<=1118
+[MTP-SEQRM]   cell[0] pos=1121
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1121
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1119
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+-[MTP-SEQRM] seq_id=0, p0=1120, p1=2147483647, tail_pos=1121, searching for checkpoint at pos<=1119
+[MTP-SEQRM]   cell[0] pos=1121
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1121
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1120
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+_window[MTP-SEQRM] seq_id=0, p0=1121, p1=2147483647, tail_pos=1121, searching for checkpoint at pos<=1120
+[MTP-SEQRM]   cell[0] pos=1121
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1121 after 1121 for sequence 0 with 1 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1121 after 1121 for sequence 0 with 1 new tokens
+_counter[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+`:[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ memory_window[MTP-SEQRM] seq_id=0, p0=1125, p1=2147483647, tail_pos=1127, searching for checkpoint at pos<=1124
+[MTP-SEQRM]   cell[0] pos=1127
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1127
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1125
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ memory[MTP-SEQRM] seq_id=0, p0=1126, p1=2147483647, tail_pos=1127, searching for checkpoint at pos<=1125
+[MTP-SEQRM]   cell[0] pos=1127
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1127
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1126
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ memory[MTP-SEQRM] seq_id=0, p0=1127, p1=2147483647, tail_pos=1127, searching for checkpoint at pos<=1126
+[MTP-SEQRM]   cell[0] pos=1127
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1127 after 1127 for sequence 0 with 1 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1127 after 1127 for sequence 0 with 1 new tokens
+-che[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+ap[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ approximation that interpolates between[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ the previous and current fixed[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ window.
+
+Requirements[MTP-SEQRM] seq_id=0, p0=1143, p1=2147483647, tail_pos=1143, searching for checkpoint at pos<=1142
+[MTP-SEQRM]   cell[0] pos=1143
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1147 after 1143 for sequence 0 with 5 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1147 after 1143 for sequence 0 with 5 new tokens
+:
+
+1. Ex[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+pose a single[MTP-SEQRM] seq_id=0, p0=1151, p1=2147483647, tail_pos=1152, searching for checkpoint at pos<=1150
+[MTP-SEQRM]   cell[0] pos=1152
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1152
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1151
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+[MTP-SEQRM] seq_id=0, p0=1152, p1=2147483647, tail_pos=1152, searching for checkpoint at pos<=1151
+[MTP-SEQRM]   cell[0] pos=1152
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+pose[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1156 after 1152 for sequence 0 with 5 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1156 after 1152 for sequence 0 with 5 new tokens
+ a single class[MTP-SEQRM] seq_id=0, p0=1155, p1=2147483647, tail_pos=1156, searching for checkpoint at pos<=1154
+[MTP-SEQRM]   cell[0] pos=1156
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1156
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1155
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ a[MTP-SEQRM] seq_id=0, p0=1156, p1=2147483647, tail_pos=1156, searching for checkpoint at pos<=1155
+[MTP-SEQRM]   cell[0] pos=1156
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1156 after 1156 for sequence 0 with 1 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1156 after 1156 for sequence 0 with 1 new tokens
+ `[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+Rate[MTP-SEQRM] seq_id=0, p0=1158, p1=2147483647, tail_pos=1161, searching for checkpoint at pos<=1157
+[MTP-SEQRM]   cell[0] pos=1161
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1161
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1158
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+Rate[MTP-SEQRM] seq_id=0, p0=1159, p1=2147483647, tail_pos=1161, searching for checkpoint at pos<=1158
+[MTP-SEQRM]   cell[0] pos=1161
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1161
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1159
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+Rate[MTP-SEQRM] seq_id=0, p0=1160, p1=2147483647, tail_pos=1161, searching for checkpoint at pos<=1159
+[MTP-SEQRM]   cell[0] pos=1161
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1161
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1160
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+Rate_resolver[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+:[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+ Callable[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[[str], Limit][MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+` passed at construction time[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ lets the caller return a[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ different capacity+refill[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ for, say, free[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+-tier vs paid-tier keys[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+. If not supplied,[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ fall back to a single[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ global limit.
+
+6[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+. Accurate monotonic[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ time via `time.mon[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+otonic_ns()` throughout[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ — never `time.time[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+()`.
+
+7.[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ The token-bucket implementation[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ must NOT lazily refill[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ on every tick; it[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ must compute the refill from[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ the delta since last consumption[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+. Include a proof-of[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+-correctness comment that[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ explains why this is equivalent[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ to per-tick refill[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ without drift.
+
+8[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+. The sliding-window-log[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ implementation must[MTP-SEQRM] seq_id=0, p0=1291, p1=2147483647, tail_pos=1293, searching for checkpoint at pos<=1290
+[MTP-SEQRM]   cell[0] pos=1293
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1293
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1291
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ implementation[MTP-SEQRM] seq_id=0, p0=1292, p1=2147483647, tail_pos=1293, searching for checkpoint at pos<=1291
+[MTP-SEQRM]   cell[0] pos=1293
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1293
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1292
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ implementation[MTP-SEQRM] seq_id=0, p0=1293, p1=2147483647, tail_pos=1293, searching for checkpoint at pos<=1292
+[MTP-SEQRM]   cell[0] pos=1293
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1293 after 1293 for sequence 0 with 1 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1293 after 1293 for sequence 0 with 1 new tokens
+ because[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+ it[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+'s tedious. Do not[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ produce pseudo-code.
+
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-SEQRM] seq_id=0, p0=1306, p1=2147483647, tail_pos=1309, searching for checkpoint at pos<=1305
+[MTP-SEQRM]   cell[0] pos=1309
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+Outputinit: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1309
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1306
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+Output[MTP-SEQRM] seq_id=0, p0=1307, p1=2147483647, tail_pos=1309, searching for checkpoint at pos<=1306
+[MTP-SEQRM]   cell[0] pos=1309
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1309
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1307
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+Output[MTP-SEQRM] seq_id=0, p0=1308, p1=2147483647, tail_pos=1309, searching for checkpoint at pos<=1307
+[MTP-SEQRM]   cell[0] pos=1309
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1309
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1308
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+Output
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+```[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+python[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+"""
+Production-ready rate[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ limiter library in[MTP-SEQRM] seq_id=0, p0=1321, p1=2147483647, tail_pos=1322, searching for checkpoint at pos<=1320
+[MTP-SEQRM]   cell[0] pos=1322
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1322
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1321
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ limiter[MTP-SEQRM] seq_id=0, p0=1322, p1=2147483647, tail_pos=1322, searching for checkpoint at pos<=1321
+[MTP-SEQRM]   cell[0] pos=1322
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1326 after 1322 for sequence 0 with 5 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1326 after 1322 for sequence 0 with 5 new tokens
+ library in Python[MTP-SEQRM] seq_id=0, p0=1325, p1=2147483647, tail_pos=1326, searching for checkpoint at pos<=1324
+[MTP-SEQRM]   cell[0] pos=1326
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1326
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1325
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ library[MTP-SEQRM] seq_id=0, p0=1326, p1=2147483647, tail_pos=1326, searching for checkpoint at pos<=1325
+[MTP-SEQRM]   cell[0] pos=1326
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1326 after 1326 for sequence 0 with 1 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1326 after 1326 for sequence 0 with 1 new tokens
+ limiter[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ limiter[MTP-SEQRM] seq_id=0, p0=1328, p1=2147483647, tail_pos=1331, searching for checkpoint at pos<=1327
+[MTP-SEQRM]   cell[0] pos=1331
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1331
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1328
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ library in limiter[MTP-SEQRM] seq_id=0, p0=1331, p1=2147483647, tail_pos=1331, searching for checkpoint at pos<=1330
+[MTP-SEQRM]   cell[0] pos=1331
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1335 after 1331 for sequence 0 with 5 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1335 after 1331 for sequence 0 with 5 new tokens
+ library in Python library library
+
+encoded 1080 tokens in    3.499 seconds, speed:  382.085 t/s
+decoded  257 tokens in    9.652 seconds, speed:   26.627 t/s
+
+n_draft      = 4
+n_predict    = 257
+n_drafted    = 230
+t_draft_flat = 0.38 ms
+t_draft      = 6.46 ms, 28.11 us per token, 35576.18 tokens per second
+n_accept     = 148
+accept       = 64.348%
+
+target:
+
+common_perf_print:    sampling time =     141.11 ms
+common_perf_print:    samplers time =      50.29 ms /   257 tokens
+common_perf_print:        load time =    1680.99 ms
+common_perf_print: prompt eval time =    9845.52 ms /  1309 tokens (    7.52 ms per token,   132.95 tokens per second)
+common_perf_print:        eval time =    2914.06 ms /    39 runs   (   74.72 ms per token,    13.38 tokens per second)
+common_perf_print:       total time =   13164.94 ms /  1348 tokens
+common_perf_print: unaccounted time =     264.25 ms /   2.0 %      (total - sampling - prompt eval - eval) / (total)
+common_perf_print:    graphs reused =         62
+common_memory_breakdown_print: | memory breakdown [MiB]     | total    free     self   model   context   compute    unaccounted |
+common_memory_breakdown_print: |   - ROCm0 (8060S Graphics) | 98304 = 19864 + (19076 = 10608 +    7973 +     495) +       59362 |
+common_memory_breakdown_print: |   - Host                   |                    946 =   682 +       0 +     264                |
+
+

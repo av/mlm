@@ -1,0 +1,540 @@
+ggml_cuda_init: found 1 ROCm devices (Total VRAM: 98304 MiB):
+  Device 0: Radeon 8060S Graphics, gfx1151 (0x1151), VMM: no, Wave Size: 32, VRAM: 98304 MiB
+common_init_result: fitting params to device memory, for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on
+common_params_fit_impl: getting device memory data for initial parameters:
+common_memory_breakdown_print: | memory breakdown [MiB]     | total    free     self   model   context   compute    unaccounted |
+common_memory_breakdown_print: |   - ROCm0 (8060S Graphics) | 98304 = 20235 + (27965 = 10608 +   16533 +     824) +       50102 |
+common_memory_breakdown_print: |   - Host                   |                   1214 =   682 +       0 +     532                |
+common_params_fit_impl: projected to use 27965 MiB of device memory vs. 20235 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1024 MiB, need to reduce device memory by 8754 MiB
+common_memory_breakdown_print: | memory breakdown [MiB]     | total    free     self   model   context   compute    unaccounted |
+common_memory_breakdown_print: |   - ROCm0 (8060S Graphics) | 98304 = 20237 + (11526 = 10608 +     405 +     513) +       66539 |
+common_memory_breakdown_print: |   - Host                   |                    710 =   682 +       0 +      28                |
+common_params_fit_impl: context size reduced from 262144 to 124672 -> need 8757 MiB less memory in total
+common_params_fit_impl: entire model can be fit by reducing context
+common_fit_params: successfully fit params to free device memory
+common_fit_params: fitting params to free memory took 0.98 seconds
+llama_model_load_from_file_impl: using device ROCm0 (Radeon 8060S Graphics) (0000:c5:00.0) - 20243 MiB free
+llama_model_loader: loaded meta data with 51 key-value pairs and 851 tensors from /models/models--unsloth--Qwen3.6-27B-GGUF/snapshots/82d411acf4a06cfb8d9b073a5211bf410bfc29bf/Qwen3.6-27B-UD-Q2_K_XL.gguf (version GGUF V3 (latest))
+llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+llama_model_loader: - kv   0:                       general.architecture str              = qwen35
+llama_model_loader: - kv   1:                               general.type str              = model
+llama_model_loader: - kv   2:                     general.sampling.top_k i32              = 20
+llama_model_loader: - kv   3:                     general.sampling.top_p f32              = 0.950000
+llama_model_loader: - kv   4:                      general.sampling.temp f32              = 1.000000
+llama_model_loader: - kv   5:                               general.name str              = Qwen3.6-27B
+llama_model_loader: - kv   6:                           general.basename str              = Qwen3.6-27B
+llama_model_loader: - kv   7:                       general.quantized_by str              = Unsloth
+llama_model_loader: - kv   8:                         general.size_label str              = 27B
+llama_model_loader: - kv   9:                            general.license str              = apache-2.0
+llama_model_loader: - kv  10:                       general.license.link str              = https://huggingface.co/Qwen/Qwen3.6-2...
+llama_model_loader: - kv  11:                           general.repo_url str              = https://huggingface.co/unsloth
+llama_model_loader: - kv  12:                   general.base_model.count u32              = 1
+llama_model_loader: - kv  13:                  general.base_model.0.name str              = Qwen3.6 27B
+llama_model_loader: - kv  14:          general.base_model.0.organization str              = Qwen
+llama_model_loader: - kv  15:              general.base_model.0.repo_url str              = https://huggingface.co/Qwen/Qwen3.6-27B
+llama_model_loader: - kv  16:                               general.tags arr[str,2]       = ["unsloth", "image-text-to-text"]
+llama_model_loader: - kv  17:                         qwen35.block_count u32              = 64
+llama_model_loader: - kv  18:                      qwen35.context_length u32              = 262144
+llama_model_loader: - kv  19:                    qwen35.embedding_length u32              = 5120
+llama_model_loader: - kv  20:                 qwen35.feed_forward_length u32              = 17408
+llama_model_loader: - kv  21:                qwen35.attention.head_count u32              = 24
+llama_model_loader: - kv  22:             qwen35.attention.head_count_kv u32              = 4
+llama_model_loader: - kv  23:             qwen35.rope.dimension_sections arr[i32,4]       = [11, 11, 10, 0]
+llama_model_loader: - kv  24:                      qwen35.rope.freq_base f32              = 10000000.000000
+llama_model_loader: - kv  25:    qwen35.attention.layer_norm_rms_epsilon f32              = 0.000001
+llama_model_loader: - kv  26:                qwen35.attention.key_length u32              = 256
+llama_model_loader: - kv  27:              qwen35.attention.value_length u32              = 256
+llama_model_loader: - kv  28:                     qwen35.ssm.conv_kernel u32              = 4
+llama_model_loader: - kv  29:                      qwen35.ssm.state_size u32              = 128
+llama_model_loader: - kv  30:                     qwen35.ssm.group_count u32              = 16
+llama_model_loader: - kv  31:                  qwen35.ssm.time_step_rank u32              = 48
+llama_model_loader: - kv  32:                      qwen35.ssm.inner_size u32              = 6144
+llama_model_loader: - kv  33:             qwen35.full_attention_interval u32              = 4
+llama_model_loader: - kv  34:                qwen35.rope.dimension_count u32              = 64
+llama_model_loader: - kv  35:                       tokenizer.ggml.model str              = gpt2
+llama_model_loader: - kv  36:                         tokenizer.ggml.pre str              = qwen35
+llama_model_loader: - kv  37:                      tokenizer.ggml.tokens arr[str,248320]  = ["!", "\"", "#", "$", "%", "&", "'", ...
+llama_model_loader: - kv  38:                  tokenizer.ggml.token_type arr[i32,248320]  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+llama_model_loader: - kv  39:                      tokenizer.ggml.merges arr[str,247587]  = ["Ġ Ġ", "ĠĠ ĠĠ", "i n", "Ġ t",...
+llama_model_loader: - kv  40:                tokenizer.ggml.eos_token_id u32              = 248046
+llama_model_loader: - kv  41:            tokenizer.ggml.padding_token_id u32              = 248055
+llama_model_loader: - kv  42:                tokenizer.ggml.bos_token_id u32              = 248044
+llama_model_loader: - kv  43:               tokenizer.ggml.add_bos_token bool             = false
+llama_model_loader: - kv  44:                    tokenizer.chat_template str              = {%- set image_count = namespace(value...
+llama_model_loader: - kv  45:               general.quantization_version u32              = 2
+llama_model_loader: - kv  46:                          general.file_type u32              = 10
+llama_model_loader: - kv  47:                      quantize.imatrix.file str              = Qwen3.6-27B-GGUF/imatrix_unsloth.gguf
+llama_model_loader: - kv  48:                   quantize.imatrix.dataset str              = unsloth_calibration_Qwen3.6-27B.txt
+llama_model_loader: - kv  49:             quantize.imatrix.entries_count u32              = 496
+llama_model_loader: - kv  50:              quantize.imatrix.chunks_count u32              = 76
+llama_model_loader: - type  f32:  449 tensors
+llama_model_loader: - type q2_K:  132 tensors
+llama_model_loader: - type q3_K:   83 tensors
+llama_model_loader: - type q4_K:   52 tensors
+llama_model_loader: - type q5_K:   48 tensors
+llama_model_loader: - type q6_K:    1 tensors
+llama_model_loader: - type iq2_xs:    2 tensors
+llama_model_loader: - type iq3_xxs:   54 tensors
+llama_model_loader: - type iq3_s:   15 tensors
+llama_model_loader: - type iq2_s:   10 tensors
+llama_model_loader: - type iq4_xs:    5 tensors
+print_info: file format = GGUF V3 (latest)
+print_info: file type   = Q2_K - Medium
+print_info: file size   = 11.03 GiB (3.52 BPW) 
+load: 0 unused tokens
+load: printing all EOG tokens:
+load:   - 248044 ('<|endoftext|>')
+load:   - 248046 ('<|im_end|>')
+load:   - 248063 ('<|fim_pad|>')
+load:   - 248064 ('<|repo_name|>')
+load:   - 248065 ('<|file_sep|>')
+load: special tokens cache size = 33
+load: token to piece cache size = 1.7581 MB
+print_info: arch                  = qwen35
+print_info: vocab_only            = 0
+print_info: no_alloc              = 0
+print_info: n_ctx_train           = 262144
+print_info: n_embd                = 5120
+print_info: n_embd_inp            = 5120
+print_info: n_layer               = 64
+print_info: n_head                = 24
+print_info: n_head_kv             = 4
+print_info: n_rot                 = 64
+print_info: n_swa                 = 0
+print_info: is_swa_any            = 0
+print_info: n_embd_head_k         = 256
+print_info: n_embd_head_v         = 256
+print_info: n_gqa                 = 6
+print_info: n_embd_k_gqa          = 1024
+print_info: n_embd_v_gqa          = 1024
+print_info: f_norm_eps            = 0.0e+00
+print_info: f_norm_rms_eps        = 1.0e-06
+print_info: f_clamp_kqv           = 0.0e+00
+print_info: f_max_alibi_bias      = 0.0e+00
+print_info: f_logit_scale         = 0.0e+00
+print_info: f_attn_scale          = 0.0e+00
+print_info: n_ff                  = 17408
+print_info: n_expert              = 0
+print_info: n_expert_used         = 0
+print_info: n_expert_groups       = 0
+print_info: n_group_used          = 0
+print_info: causal attn           = 1
+print_info: pooling type          = -1
+print_info: rope type             = 40
+print_info: rope scaling          = linear
+print_info: freq_base_train       = 10000000.0
+print_info: freq_scale_train      = 1
+print_info: n_ctx_orig_yarn       = 262144
+print_info: rope_yarn_log_mul     = 0.0000
+print_info: rope_finetuned        = unknown
+print_info: mrope sections        = [11, 11, 10, 0]
+print_info: ssm_d_conv            = 4
+print_info: ssm_d_inner           = 6144
+print_info: ssm_d_state           = 128
+print_info: ssm_dt_rank           = 48
+print_info: ssm_n_group           = 16
+print_info: ssm_dt_b_c_rms        = 0
+print_info: model type            = 27B
+print_info: model params          = 26.90 B
+print_info: general.name          = Qwen3.6-27B
+print_info: vocab type            = BPE
+print_info: n_vocab               = 248320
+print_info: n_merges              = 247587
+print_info: BOS token             = 248044 '<|endoftext|>'
+print_info: EOS token             = 248046 '<|im_end|>'
+print_info: EOT token             = 248046 '<|im_end|>'
+print_info: PAD token             = 248055 '<|vision_pad|>'
+print_info: LF token              = 198 'Ċ'
+print_info: FIM PRE token         = 248060 '<|fim_prefix|>'
+print_info: FIM SUF token         = 248062 '<|fim_suffix|>'
+print_info: FIM MID token         = 248061 '<|fim_middle|>'
+print_info: FIM PAD token         = 248063 '<|fim_pad|>'
+print_info: FIM REP token         = 248064 '<|repo_name|>'
+print_info: FIM SEP token         = 248065 '<|file_sep|>'
+print_info: EOG token             = 248044 '<|endoftext|>'
+print_info: EOG token             = 248046 '<|im_end|>'
+print_info: EOG token             = 248063 '<|fim_pad|>'
+print_info: EOG token             = 248064 '<|repo_name|>'
+print_info: EOG token             = 248065 '<|file_sep|>'
+print_info: max token length      = 256
+load_tensors: loading model tensors, this can take a while... (mmap = true, direct_io = false)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 63 repeating layers to GPU
+load_tensors: offloaded 65/65 layers to GPU
+load_tensors:   CPU_Mapped model buffer size =   682.03 MiB
+load_tensors:        ROCm0 model buffer size = 10608.32 MiB
+........................................................................................
+common_init_result: added <|endoftext|> logit bias = -inf
+common_init_result: added <|im_end|> logit bias = -inf
+common_init_result: added <|fim_pad|> logit bias = -inf
+common_init_result: added <|repo_name|> logit bias = -inf
+common_init_result: added <|file_sep|> logit bias = -inf
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 124672
+llama_context: n_ctx_seq     = 124672
+llama_context: n_batch       = 2048
+llama_context: n_ubatch      = 512
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = enabled
+llama_context: kv_unified    = false
+llama_context: freq_base     = 10000000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (124672) < n_ctx_train (262144) -- the full capacity of the model will not be utilized
+llama_context:  ROCm_Host  output buffer size =     0.95 MiB
+llama_kv_cache:      ROCm0 KV buffer size =  7792.00 MiB
+llama_kv_cache: size = 7792.00 MiB (124672 cells,  16 layers,  1/1 seqs), K (f16): 3896.00 MiB, V (f16): 3896.00 MiB
+llama_kv_cache: attn_rot_k = 0, n_embd_head_k_all = 256
+llama_kv_cache: attn_rot_v = 0, n_embd_head_k_all = 256
+llama_memory_recurrent:      ROCm0 RS buffer size =   149.62 MiB
+llama_memory_recurrent: size =  149.62 MiB (     1 cells,  64 layers,  1 seqs), R (f32):    5.62 MiB, S (f32):  144.00 MiB
+sched_reserve: reserving ...
+sched_reserve: resolving fused Gated Delta Net support:
+sched_reserve: fused Gated Delta Net (autoregressive) enabled
+sched_reserve: fused Gated Delta Net (chunked) enabled
+sched_reserve:      ROCm0 compute buffer size =   495.00 MiB
+sched_reserve:  ROCm_Host compute buffer size =   263.52 MiB
+sched_reserve: graph nodes  = 3656
+sched_reserve: graph splits = 2
+sched_reserve: reserve took 52.97 ms, sched copies = 1
+common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=0, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=2, n_seqs=1, size=1, used=0, head=0
+
+
+You are an AI assistant helping Ivan, a TypeScript and Python developer who runs a local LLM homelab on a Strix Halo machine with 96 GB of unified memory and the gfx1151 ROCm stack. Ivan runs Harbor, tinkers with llama.cpp, and writes the occasional small video-game prototype. He treats you as a technical peer, wants direct answers without hedging, and is allergic to boilerplate explanations of things he already knows. Keep your tone conversational but dense, skip disclaimers, and never pad with phrases like great question.
+
+Conversation so far:
+
+User: Quick one. I am building a kid-learns-a-new-word-a-day Android app for my 6-year-old daughter. She is mostly pre-reader but picking up letters. The app would show one word per day, pronounce it, show a small picture, and quiz her at the end of the week with the five words she has seen. What stack do you recommend: native Kotlin, Flutter, React Native, or just a PWA?
+
+Assistant: For a 6-year-old word-a-day app with weekly quiz, skip the PWA. Audio playback reliability on locked Android is iffy, and you will want offline TTS which is painful from a service worker. Flutter is the best answer for this specific scope. Reasons: built-in just_audio and flutter_tts cover the pronounce-and-hear use case, Hive or Drift gives you a flat-file DB for progress and the five-word-per-week buffer, and the UI toolkit lets you do big tappable cards and simple animations without fighting the framework. Native Kotlin is overkill for a single-device personal app you will maintain for five minutes a month. React Native you would end up glueing two audio libraries and a notification library with worse documentation than Flutter equivalents. A week of evenings gets you something shipped on your daughter's tablet. For the daily-word content, do not hand-curate. Use a 200-word seed list from a published CEFR A1 or Dolch list, randomize presentation order, and log which words she got right in the Friday quiz so you can surface the misses again two weeks later. Built-in spaced repetition without the Anki gloss.
+
+User: OK Flutter sold. But on the content side, I want to be a bit more flexible than a static word list. I want her to tell me on Sunday what topic she likes this week, say dinosaurs or cooking or space, and the app should serve 5 words from that topic for the coming week. I can run a local LLM to generate and validate the words, but I do not want the Android device talking to my homelab directly (her tablet goes out of the house). Offline bundles? Sync? How would you architect the content pipeline?
+
+Assistant: Generate weekly content packs on the homelab, rsync-style to a cheap object store the Android app pulls from on Wi-Fi. Flow: Sunday evening she picks a topic in the app, it writes the choice to a local SQLite row, next time it sees Wi-Fi it POSTs the choice to a small FastAPI endpoint you run behind a Tailscale subnet or a Cloudflare Tunnel. That endpoint enqueues a job that asks Qwen or whichever local model to produce a JSON blob of five words with a child-appropriate definition, a one-sentence usage example, an IPA hint, and a text-to-image prompt. You validate the JSON against a pydantic schema, reject and retry if the model went off-script. Then generate the 5 PNGs with a small image model or just a stock clipart lookup if you want to skip the GPU cost. Zip the pack, push to an R2 bucket or Backblaze B2, and the app polls a lightweight manifest.json once per day on Wi-Fi to see if a new pack is ready. The tablet never needs to reach your LAN. Key detail: sign the manifest with a minisign key so a random public-bucket URL typo cannot poison the app. And cache two weeks ahead on the device so that if she goes to grandma's for a weekend she still has words.
+
+User: Love it. Last question before I start coding this weekend: how do I handle the pronunciation audio? On-device TTS sounds robotic and my daughter will notice. But bundling recorded audio for every possible weekly word is too much disk. What is the right middle ground?
+
+Please give a direct, actionable recommendation plus two or three concrete fallback options ranked by how much effort they are to ship. Consider both voice quality and the practical constraint that this is a side project I want to spend maybe four evenings on total.[MTP-FINDSLOT] find_slot: n_seq_tokens=512, n_seqs=1, size=1, used=0, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=441, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=512, n_seqs=1, size=1, used=0, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=441, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+
+
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-SEQRM] seq_id=0, p0=955, p1=2147483647, tail_pos=958, searching for checkpoint at pos<=954
+[MTP-SEQRM]   cell[0] pos=958
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 958
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 955
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+<think><think>[MTP-SEQRM] seq_id=0, p0=956, p1=2147483647, tail_pos=958, searching for checkpoint at pos<=955
+[MTP-SEQRM]   cell[0] pos=958
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 958
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 956
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+<think>[MTP-SEQRM] seq_id=0, p0=957, p1=2147483647, tail_pos=958, searching for checkpoint at pos<=956
+[MTP-SEQRM]   cell[0] pos=958
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 958
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 957
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+<think>:[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+
+
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+<think>[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+
+
+[MTP-SEQRM] seq_id=0, p0=962, p1=2147483647, tail_pos=965, searching for checkpoint at pos<=961
+[MTP-SEQRM]   cell[0] pos=965
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 965
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 962
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+
+
+[MTP-SEQRM] seq_id=0, p0=963, p1=2147483647, tail_pos=965, searching for checkpoint at pos<=962
+[MTP-SEQRM]   cell[0] pos=965
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 965
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 963
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+
+
+[MTP-SEQRM] seq_id=0, p0=964, p1=2147483647, tail_pos=965, searching for checkpoint at pos<=963
+[MTP-SEQRM]   cell[0] pos=965
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 965
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 964
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+
+[MTP-SEQRM] seq_id=0, p0=965, p1=2147483647, tail_pos=965, searching for checkpoint at pos<=964
+[MTP-SEQRM]   cell[0] pos=965
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 965 after 965 for sequence 0 with 1 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 965 after 965 for sequence 0 with 1 new tokens
+I[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+van[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+:[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+ I[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+ am[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+ building[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ a kid-learns[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+-a-new-word-a-day[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ Android app for my [MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+6-year-old daughter[MTP-SEQRM] seq_id=0, p0=990, p1=2147483647, tail_pos=990, searching for checkpoint at pos<=989
+[MTP-SEQRM]   cell[0] pos=990
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 994 after 990 for sequence 0 with 5 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 994 after 990 for sequence 0 with 5 new tokens
+. She is mostly pre[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+-reader but picking up letters[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+. The app would show[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ one word per day,[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ pronounce it, show a[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ small picture, and quiz[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ her at the end of[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ the week with the five[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ words she has seen.[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ What stack do you recommend[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+: native Kotlin, Flutter[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+, React Native, or[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ just a PWA?[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+
+
+Assistant: For[MTP-SEQRM] seq_id=0, p0=1059, p1=2147483647, tail_pos=1059, searching for checkpoint at pos<=1058
+[MTP-SEQRM]   cell[0] pos=1059
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1063 after 1059 for sequence 0 with 5 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1063 after 1059 for sequence 0 with 5 new tokens
+ a 6-year-old[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ word[MTP-SEQRM] seq_id=0, p0=1065, p1=2147483647, tail_pos=1068, searching for checkpoint at pos<=1064
+[MTP-SEQRM]   cell[0] pos=1068
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1068
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1065
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ word[MTP-SEQRM] seq_id=0, p0=1066, p1=2147483647, tail_pos=1068, searching for checkpoint at pos<=1065
+[MTP-SEQRM]   cell[0] pos=1068
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1068
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1066
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+[MTP-SEQRM] seq_id=0, p0=1067, p1=2147483647, tail_pos=1068, searching for checkpoint at pos<=1066
+[MTP-SEQRM]   cell[0] pos=1068
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+ wordinit: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1068
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1067
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ word[MTP-SEQRM] seq_id=0, p0=1068, p1=2147483647, tail_pos=1068, searching for checkpoint at pos<=1067
+[MTP-SEQRM]   cell[0] pos=1068
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1072 after 1068 for sequence 0 with 5 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1072 after 1068 for sequence 0 with 5 new tokens
+ list[MTP-SEQRM] seq_id=0, p0=1069, p1=2147483647, tail_pos=1072, searching for checkpoint at pos<=1068
+[MTP-SEQRM]   cell[0] pos=1072
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1072
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1069
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+-a[MTP-SEQRM] seq_id=0, p0=1070, p1=2147483647, tail_pos=1072, searching for checkpoint at pos<=1069
+[MTP-SEQRM]   cell[0] pos=1072
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1072
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1070
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+[MTP-SEQRM] seq_id=0, p0=1071, p1=2147483647, tail_pos=1072, searching for checkpoint at pos<=1070
+[MTP-SEQRM]   cell[0] pos=1072
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1072
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1071
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+-a daughter[MTP-SEQRM] seq_id=0, p0=1072, p1=2147483647, tail_pos=1072, searching for checkpoint at pos<=1071
+[MTP-SEQRM]   cell[0] pos=1072
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1072 after 1072 for sequence 0 with 1 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=1, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1072 after 1072 for sequence 0 with 1 new tokens
+.[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ She is word[MTP-SEQRM] seq_id=0, p0=1076, p1=2147483647, tail_pos=1077, searching for checkpoint at pos<=1075
+[MTP-SEQRM]   cell[0] pos=1077
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+init: the tokens of sequence 0 in the input batch have inconsistent sequence positions:
+ - the last position stored in the memory module of the context (i.e. the KV cache) for sequence 0 is X = 1077
+ - the tokens for sequence 0 in the input batch have a starting position of Y = 1076
+ for M-RoPE, it is required that the position satisfies: X <= Y
+decode: failed to initialize batch
+llama_decode: failed to decode, ret = -1
+ She[MTP-SEQRM] seq_id=0, p0=1077, p1=2147483647, tail_pos=1077, searching for checkpoint at pos<=1076
+[MTP-SEQRM]   cell[0] pos=1077
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1081 after 1077 for sequence 0 with 5 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1081 after 1077 for sequence 0 with 5 new tokens
+ is mostly pre-reader but[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ picking up letters. The[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ app would show one word[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ per day, pronounce it[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+, show a small picture[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+, and quiz her at[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ the end of the week[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ with the five words she[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ has seen. What stack[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ do you recommend: native[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ Kotlin, Flutter, React[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ Native, or just a[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ PWA?
+
+Assistant[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+: For a 6[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+-year-old word[MTP-SEQRM] seq_id=0, p0=1151, p1=2147483647, tail_pos=1151, searching for checkpoint at pos<=1150
+[MTP-SEQRM]   cell[0] pos=1151
+[MTP-SEQRM] NO checkpoint found — seq_rm FAILED
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+-afind_slot: non-consecutive token position 1155 after 1151 for sequence 0 with 5 new tokens
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+find_slot: non-consecutive token position 1155 after 1151 for sequence 0 with 5 new tokens
+-day app with weekly quiz[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+, skip the PWA[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+. Audio playback reliability on[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ locked Android is iffy[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+, and you will want[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ offline TTS which is[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ painful from a service worker[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+. Flutter is the best[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ answer for this specific scope[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+. Reasons: built-in[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ just_audio and flutter_t[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+[MTP-FINDSLOT] find_slot: n_seq_tokens=5, n_seqs=1, size=1, used=1, head=0
+ts cover the pronounce-and
+
+encoded  954 tokens in    2.997 seconds, speed:  404.403 t/s
+decoded  258 tokens in    8.056 seconds, speed:   32.026 t/s
+
+n_draft      = 4
+n_predict    = 258
+n_drafted    = 212
+t_draft_flat = 0.37 ms
+t_draft      = 3.36 ms, 15.86 us per token, 63057.70 tokens per second
+n_accept     = 184
+accept       = 86.792%
+
+target:
+
+common_perf_print:    sampling time =     145.28 ms
+common_perf_print:    samplers time =      52.92 ms /   258 tokens
+common_perf_print:        load time =    1634.02 ms
+common_perf_print: prompt eval time =   10085.48 ms /  1209 tokens (    8.34 ms per token,   119.88 tokens per second)
+common_perf_print:        eval time =     668.19 ms /     9 runs   (   74.24 ms per token,    13.47 tokens per second)
+common_perf_print:       total time =   11066.19 ms /  1218 tokens
+common_perf_print: unaccounted time =     167.24 ms /   1.5 %      (total - sampling - prompt eval - eval) / (total)
+common_perf_print:    graphs reused =         52
+common_memory_breakdown_print: | memory breakdown [MiB]     | total    free     self   model   context   compute    unaccounted |
+common_memory_breakdown_print: |   - ROCm0 (8060S Graphics) | 98304 = 19899 + (19044 = 10608 +    7941 +     495) +       59359 |
+common_memory_breakdown_print: |   - Host                   |                    945 =   682 +       0 +     263                |
+
+
