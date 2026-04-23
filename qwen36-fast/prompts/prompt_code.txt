@@ -1,1 +1,125 @@
-Write a Python function called `merge_sorted_lists(lists)` that takes a list of sorted lists of integers and merges them all into a single sorted list. Explain your algorithm choice, walk through the time complexity analysis, and provide two alternative implementations (one using a heap and one without). Include docstrings, type hints, and usage examples for each version. Then, explain which version you would prefer in production and why.
+You are a senior software engineer reviewing this Python module. Repeat the module contents below verbatim at the end of your answer as a reference, then write a detailed review focusing on correctness, performance, and readability. Do not skip repeating the module.
+
+```python
+# ngram_cache.py - a simple in-memory n-gram cache with disk persistence.
+# Used for prompt-lookup speculative decoding.
+
+import json
+import os
+from collections import Counter, defaultdict
+from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+
+DEFAULT_NGRAM_MIN = 1
+DEFAULT_NGRAM_MAX = 4
+DEFAULT_CACHE_PATH = os.path.expanduser("~/.cache/llama/ngram.bin")
+
+
+class NgramCache:
+    """A simple in-memory n-gram cache.
+
+    The cache maps a tuple of token ids (the n-gram key) to a Counter of
+    candidate next tokens. On lookup, it returns the most common next token
+    for the longest matching n-gram. If no match is found at ngram_max, it
+    backs off to ngram_max - 1 and so on down to ngram_min. The cache can be
+    persisted to disk via save() and loaded via load().
+
+    Parameters
+    ----------
+    ngram_min : int
+        The minimum n-gram length to track.
+    ngram_max : int
+        The maximum n-gram length to track.
+    """
+
+    def __init__(self, ngram_min: int = DEFAULT_NGRAM_MIN, ngram_max: int = DEFAULT_NGRAM_MAX):
+        if ngram_min < 1:
+            raise ValueError("ngram_min must be >= 1")
+        if ngram_max < ngram_min:
+            raise ValueError("ngram_max must be >= ngram_min")
+        self.ngram_min = ngram_min
+        self.ngram_max = ngram_max
+        self._data: Dict[Tuple[int, ...], Counter] = defaultdict(Counter)
+
+    def update(self, tokens: Sequence[int]) -> None:
+        """Update the cache with all n-grams from the given token sequence."""
+        tokens = list(tokens)
+        for n in range(self.ngram_min, self.ngram_max + 1):
+            for i in range(len(tokens) - n):
+                key = tuple(tokens[i:i + n])
+                nxt = tokens[i + n]
+                self._data[key][nxt] += 1
+
+    def lookup(self, context: Sequence[int]) -> Optional[int]:
+        """Return the most likely next token given the trailing context, or None."""
+        context = list(context)
+        for n in range(self.ngram_max, self.ngram_min - 1, -1):
+            if len(context) < n:
+                continue
+            key = tuple(context[-n:])
+            if key in self._data:
+                most_common = self._data[key].most_common(1)
+                if most_common:
+                    return most_common[0][0]
+        return None
+
+    def save(self, path: str = DEFAULT_CACHE_PATH) -> None:
+        """Persist the cache to disk as a JSON file."""
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        serialisable = {
+            "ngram_min": self.ngram_min,
+            "ngram_max": self.ngram_max,
+            "data": [
+                {"key": list(k), "counts": dict(v)}
+                for k, v in self._data.items()
+            ],
+        }
+        with open(path, "w") as f:
+            json.dump(serialisable, f)
+
+    @classmethod
+    def load(cls, path: str = DEFAULT_CACHE_PATH) -> "NgramCache":
+        """Load the cache from a JSON file on disk."""
+        with open(path, "r") as f:
+            data = json.load(f)
+        cache = cls(ngram_min=data["ngram_min"], ngram_max=data["ngram_max"])
+        for entry in data["data"]:
+            cache._data[tuple(entry["key"])] = Counter({int(k): int(v) for k, v in entry["counts"].items()})
+        return cache
+
+
+def merge(a: NgramCache, b: NgramCache) -> NgramCache:
+    """Merge two caches into a new one. Both must have the same ngram_min/max."""
+    if a.ngram_min != b.ngram_min or a.ngram_max != b.ngram_max:
+        raise ValueError("ngram_min/max must match to merge")
+    out = NgramCache(ngram_min=a.ngram_min, ngram_max=a.ngram_max)
+    for key, counts in a._data.items():
+        out._data[key].update(counts)
+    for key, counts in b._data.items():
+        out._data[key].update(counts)
+    return out
+```
+
+Write the review now. Keep it thorough. Remember to repeat the module verbatim at the end.
+
+Context for your review: this module is part of a speculative decoding pipeline. The n-gram cache is used to draft candidate tokens; a match at the longest n-gram wins, backing off as necessary. The cache is persisted so that subsequent runs benefit from previously-seen text. A typical workload sees prompt reuse across many generations, so persistence matters. Empirically, ngram_max=4 and ngram_min=1 are good defaults; larger n_max tends to reduce recall, smaller n_min tends to reduce precision. For very repetitive corpora (code, documents with quoted text, chat logs containing earlier messages), acceptance rates of 40-70 percent are common. For more creative text, acceptance rates of 20-30 percent are typical.
+
+Please structure your review as:
+
+1. Correctness — any bugs, edge cases, off-by-one errors, error handling.
+2. Performance — hot-path cost, memory footprint, asymptotic complexity.
+3. Readability — naming, docstrings, structure.
+4. API design — are the public methods well-chosen, is the persistence format reasonable.
+5. Suggested changes — prioritised list.
+
+Then repeat the module verbatim.
+
+Additional notes for the review context — consider these when writing each section:
+
+- The cache uses a defaultdict of Counter, so inserting a key that is absent is implicit. This is convenient but can hide bugs where an unexpected key is queried. A stricter variant would raise or return a typed "miss" object. Assess whether the implicit behavior is a good fit for this use case.
+- The save() method serialises int keys as strings (JSON limitation) and the load() method casts them back. Any bug in that round-trip will silently corrupt the cache. Recommend a round-trip test.
+- The update() method has a subtle off-by-one: `for i in range(len(tokens) - n)` excludes the last valid starting index when `i + n == len(tokens) - 1 + 1`. Verify whether this is correct or whether the loop should be `range(len(tokens) - n + 1)` with the "next token" fetched defensively (currently tokens[i + n] would be out of range at the last valid start).
+- Performance: the defaultdict-of-Counter structure is O(1) per insert but has high per-entry overhead. For million-token corpora, a flat array of (hash, next, count) tuples, or a compact C-level structure (e.g., numpy arrays) would dominate. Assess whether this matters for the target workload.
+- Memory: the cache stores every unique n-gram. For large ngram_max (say 6) on a 1M token corpus this can balloon quickly. Suggest a top-K pruning option that keeps only the most common entries per key. This trades a small recall loss for bounded memory.
+- API: there is no clear() method and no way to cap the cache size. Consider adding both, particularly if the cache is intended to be long-lived.
+
+Keep your review professional and focused. Use section headers to clearly delimit the five sections. Each section should be 3-6 bullet points. After the review, repeat the entire module source code verbatim, including the docstring and the type hints.

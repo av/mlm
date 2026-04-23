@@ -1,1 +1,4 @@
 deps/
+build-artifacts/*.gguf
+build-artifacts/*.bin
+bench/run-best-*.log

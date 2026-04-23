@@ -28,3 +28,24 @@
 9. If MTP head present: wire into llama.cpp spec decoding.
 10. If not: sketch EAGLE-3 head architecture suitable for 27B.
 11. Plan doc for DFlash block-verify port.
+
+---
+
+## Night outcome (written 2026-04-23 ~04:30 CEST)
+
+- **Best result: 30.05 tps** via n-gram lookup speculative decoding on
+  UD-Q2_K_XL with `--draft-max 4` (iter-13, 2.17x over Q2_K_XL baseline
+  of 13.82 tps). Output verified coherent.
+- **Target of 40 tps NOT reached.** Lookup saturates at ~31 tps clean on
+  this hardware; dm>=8 wall-clock hits 36-52 tps but output degenerates.
+- **MTP path (PR #20700) regresses to 7.80 tps** on Strix Halo's 256 GB/s
+  memory — architecturally unsuited to bandwidth-bound APUs even at
+  alpha=1.00.
+- Phase 2 (Gated DeltaNet Vulkan kernel work) was skipped entirely.
+  Post-iter-5 it was clear ROCm 7.2 kernels already reach 70% of the
+  bandwidth ceiling; the bottleneck was spec-decode plumbing, not
+  kernels. Correct pivot.
+
+**Start here for the morning review**: `../README.md` (TL;DR + results
+table) and `./08-final-state.md` (full postmortem + lessons for future
+Strix Halo LLM work). Reproducible bench: `../bench/run-best.sh`.
