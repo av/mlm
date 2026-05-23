@@ -162,3 +162,10 @@ cython_debug/
 ./.cache
 ./data
 papers/
+
+# Model checkpoints and artifacts (large binaries, on HF Hub)
+*.pt
+*.bin
+*.safetensors
+*.onnx
+*.onnx.data
