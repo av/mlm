@@ -169,3 +169,20 @@ papers/
 *.safetensors
 *.onnx
 *.onnx.data
+
+# Training logs and generated checkpoint metadata
+*.log
+__pycache__/
+
+# pi-detector generated model artifacts (keep source scripts, ignore outputs)
+pi-detector/pi-*/
+pi-detector/content/
+
+# supra-50m-onnx model exports (keep space/ demo source, ignore model artifacts)
+supra-50m-onnx/model-repo/
+supra-50m-onnx/onnx-export/
+
+# qwen36-fast build artifacts
+qwen36-fast/build-artifacts/*.bin
+qwen36-fast/bench/*.log
+qwen36-fast/bench/*.json
